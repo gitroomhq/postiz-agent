@@ -26,10 +26,6 @@ postiz upload audio.mp3
 | `.png` | `image/png` | ✅ Yes |
 | `.jpg`, `.jpeg` | `image/jpeg` | ✅ Yes |
 | `.gif` | `image/gif` | ✅ Yes |
-| `.webp` | `image/webp` | ✅ Yes |
-| `.svg` | `image/svg+xml` | ✅ Yes |
-| `.bmp` | `image/bmp` | ✅ Yes |
-| `.ico` | `image/x-icon` | ✅ Yes |
 
 **Examples:**
 ```bash
@@ -44,15 +40,6 @@ postiz upload icon.svg
 | Extension | MIME Type | Supported |
 |-----------|-----------|-----------|
 | `.mp4` | `video/mp4` | ✅ Yes |
-| `.mov` | `video/quicktime` | ✅ Yes |
-| `.avi` | `video/x-msvideo` | ✅ Yes |
-| `.mkv` | `video/x-matroska` | ✅ Yes |
-| `.webm` | `video/webm` | ✅ Yes |
-| `.flv` | `video/x-flv` | ✅ Yes |
-| `.wmv` | `video/x-ms-wmv` | ✅ Yes |
-| `.m4v` | `video/x-m4v` | ✅ Yes |
-| `.mpeg`, `.mpg` | `video/mpeg` | ✅ Yes |
-| `.3gp` | `video/3gpp` | ✅ Yes |
 
 **Examples:**
 ```bash
