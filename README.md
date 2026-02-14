@@ -29,7 +29,6 @@ pnpm link --global
 ### For Development
 
 ```bash
-cd apps/cli
 pnpm install
 pnpm run build
 pnpm link --global
@@ -524,21 +523,20 @@ The CLI provides clear error messages with exit codes:
 ### Project Structure
 
 ```
-apps/cli/
-├── src/
-│   ├── index.ts              # CLI entry point with yargs
-│   ├── api.ts                # PostizAPI client class
-│   ├── config.ts             # Environment configuration
-│   └── commands/
-│       ├── posts.ts          # Post management commands
-│       ├── integrations.ts   # Integration commands
-│       └── upload.ts         # Media upload command
-├── examples/                 # Example scripts and JSON files
-├── package.json
-├── tsconfig.json
-├── tsup.config.ts            # Build configuration
-├── README.md                 # This file
-└── SKILL.md                  # AI agent reference
+src/
+├── index.ts              # CLI entry point with yargs
+├── api.ts                # PostizAPI client class
+├── config.ts             # Environment configuration
+└── commands/
+    ├── posts.ts          # Post management commands
+    ├── integrations.ts   # Integration commands
+    └── upload.ts         # Media upload command
+examples/                 # Example scripts and JSON files
+package.json
+tsconfig.json
+tsup.config.ts            # Build configuration
+README.md                 # This file
+SKILL.md                  # AI agent reference
 ```
 
 ### Scripts
