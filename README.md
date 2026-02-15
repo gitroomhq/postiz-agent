@@ -16,27 +16,6 @@ npm install -g postiz
 pnpm install -g postiz
 ```
 
-### From Source
-
-```bash
-git clone https://github.com/gitroomhq/postiz-app.git
-cd postiz-app/apps/cli
-pnpm install
-pnpm run build
-pnpm link --global
-```
-
-### For Development
-
-```bash
-pnpm install
-pnpm run build
-pnpm link --global
-
-# Or run directly without linking
-pnpm run start -- posts:list
-```
-
 ---
 
 ## Setup
