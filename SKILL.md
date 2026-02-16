@@ -5,6 +5,17 @@ homepage: https://docs.postiz.com/public-api/introduction
 metadata: {"clawdbot":{"emoji":"🌎","requires":{"bins":[],"env":["POSTIZ_API_URL","POSTIZ_API_KEY"]}}}
 ---
 
+## Install Postiz if it doesn't exist
+
+```bash
+npm install -g postiz
+# or
+pnpm install -g postiz
+```
+
+---
+
+
 | Property | Value |
 |----------|-------|
 | **name** | postiz |
