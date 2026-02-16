@@ -248,32 +248,16 @@ postiz posts:create \
 
 ### Generate Commands Programmatically
 
-```javascript
-function createThreadCommand(tweets, integrationId) {
-  const parts = [
-    'postiz posts:create'
-  ];
-
-  tweets.forEach(tweet => {
-    parts.push(`-c "${tweet.content}"`);
-    if (tweet.media && tweet.media.length > 0) {
-      parts.push(`-m "${tweet.media.join(',')}"`);
-    }
-  });
-
-  parts.push(`-i "${integrationId}"`);
-
-  return parts.join(' \\\n  ');
-}
-
-const thread = [
-  { content: "Tweet 1/3", media: ["img1.jpg"] },
-  { content: "Tweet 2/3", media: ["img2.jpg"] },
-  { content: "Tweet 3/3", media: ["img3.jpg"] }
-];
-
-const command = createThreadCommand(thread, "twitter-123");
-console.log(command);
+```bash
+# Generate a thread command with multiple tweets
+postiz posts:create \
+  -c "Tweet 1/3" \
+  -m "img1.jpg" \
+  -c "Tweet 2/3" \
+  -m "img2.jpg" \
+  -c "Tweet 3/3" \
+  -m "img3.jpg" \
+  -i "twitter-123"
 ```
 
 ### Escape Special Characters

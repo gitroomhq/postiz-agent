@@ -317,32 +317,29 @@ postiz integrations:trigger <integration-id> <methodName> -d '{"key":"value"}'
 
 For AI agents, this enables dynamic discovery and usage:
 
-```javascript
-// 1. Get settings and tools
-const settings = JSON.parse(
-  execSync(`postiz integrations:settings ${integrationId}`)
-);
+```bash
+#!/bin/bash
 
-// 2. Check if tools are needed
-const tools = settings.output.tools || [];
+INTEGRATION_ID="your-integration-id"
 
-// 3. Call tools to get required data
-for (const tool of tools) {
-  if (needsThisTool(tool)) {
-    const data = buildDataForTool(tool.dataSchema);
-    const result = JSON.parse(
-      execSync(
-        `postiz integrations:trigger ${integrationId} ${tool.methodName} -d '${JSON.stringify(data)}'`
-      )
-    );
+# 1. Get settings and tools
+SETTINGS=$(postiz integrations:settings "$INTEGRATION_ID")
+echo "$SETTINGS" | jq '.output.tools'
 
-    // Use result.output in your settings
-    updateSettings(result.output);
-  }
-}
+# 2. Get tool method names
+TOOLS=$(echo "$SETTINGS" | jq -r '.output.tools[]?.methodName')
 
-// 4. Create post with complete settings
-execSync(`postiz posts:create -c "${content}" --settings '${JSON.stringify(settings)}' -i "${integrationId}"`);
+# 3. Call tools to get required data
+for METHOD in $TOOLS; do
+  RESULT=$(postiz integrations:trigger "$INTEGRATION_ID" "$METHOD" -d '{}')
+  echo "Tool $METHOD returned: $RESULT"
+done
+
+# 4. Create post with complete settings
+postiz posts:create \
+  -c "Your content" \
+  --settings '{"key": "value"}' \
+  -i "$INTEGRATION_ID"
 ```
 
 ## Error Handling

@@ -318,31 +318,28 @@ postiz posts:create --json campaign.json
 
 ### Pattern 5: Validate Settings Before Posting
 
-```javascript
-const { execSync } = require('child_process');
+```bash
+#!/bin/bash
 
-function validateAndPost(content, integrationId, settings) {
-  // Get integration settings
-  const settingsResult = execSync(
-    `postiz integrations:settings ${integrationId}`,
-    { encoding: 'utf-8' }
-  );
-  const schema = JSON.parse(settingsResult);
+INTEGRATION_ID="twitter-123"
+CONTENT="Your post content here"
 
-  // Check character limit
-  if (content.length > schema.output.maxLength) {
-    console.warn(`Content exceeds ${schema.output.maxLength} chars, truncating...`);
-    content = content.substring(0, schema.output.maxLength - 3) + '...';
-  }
+# Get integration settings and extract max length
+SETTINGS_JSON=$(postiz integrations:settings "$INTEGRATION_ID")
+MAX_LENGTH=$(echo "$SETTINGS_JSON" | jq '.output.maxLength')
 
-  // Create post
-  const result = execSync(
-    `postiz posts:create -c "${content}" -s "2024-12-31T12:00:00Z" --settings '${JSON.stringify(settings)}' -i "${integrationId}"`,
-    { encoding: 'utf-8' }
-  );
+# Check character limit and truncate if needed
+if [ ${#CONTENT} -gt "$MAX_LENGTH" ]; then
+  echo "Content exceeds $MAX_LENGTH chars, truncating..."
+  CONTENT="${CONTENT:0:$((MAX_LENGTH - 3))}..."
+fi
 
-  return JSON.parse(result);
-}
+# Create post with settings
+postiz posts:create \
+  -c "$CONTENT" \
+  -s "2024-12-31T12:00:00Z" \
+  --settings '{"key": "value"}' \
+  -i "$INTEGRATION_ID"
 ```
 
 ### Pattern 6: Batch Scheduling
@@ -375,31 +372,30 @@ done
 
 ### Pattern 7: Error Handling & Retry
 
-```javascript
-const { execSync } = require('child_process');
+```bash
+#!/bin/bash
 
-async function postWithRetry(content, integrationId, date, maxRetries = 3) {
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      const result = execSync(
-        `postiz posts:create -c "${content}" -s "${date}" -i "${integrationId}"`,
-        { encoding: 'utf-8', stdio: 'pipe' }
-      );
-      console.log('✅ Post created successfully');
-      return JSON.parse(result);
-    } catch (error) {
-      console.error(`❌ Attempt ${attempt} failed: ${error.message}`);
+CONTENT="Your post content"
+INTEGRATION_ID="twitter-123"
+DATE="2024-12-31T12:00:00Z"
+MAX_RETRIES=3
 
-      if (attempt < maxRetries) {
-        const delay = Math.pow(2, attempt) * 1000; // Exponential backoff
-        console.log(`⏳ Retrying in ${delay}ms...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-      } else {
-        throw new Error(`Failed after ${maxRetries} attempts`);
-      }
-    }
-  }
-}
+for attempt in $(seq 1 $MAX_RETRIES); do
+  if postiz posts:create -c "$CONTENT" -s "$DATE" -i "$INTEGRATION_ID"; then
+    echo "Post created successfully"
+    break
+  else
+    echo "Attempt $attempt failed"
+    if [ "$attempt" -lt "$MAX_RETRIES" ]; then
+      DELAY=$((2 ** attempt))
+      echo "Retrying in ${DELAY}s..."
+      sleep "$DELAY"
+    else
+      echo "Failed after $MAX_RETRIES attempts"
+      exit 1
+    fi
+  fi
+done
 ```
 
 ---

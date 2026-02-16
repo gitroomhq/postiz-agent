@@ -270,34 +270,28 @@ done
 
 ### Generate JSON Programmatically
 
-```javascript
-const fs = require('fs');
-
-function createThreadPost(tweets, integrationId) {
-  return {
-    type: 'now',
-    date: new Date().toISOString(),
-    shortLink: true,
-    tags: [],
-    posts: [{
-      integration: { id: integrationId },
-      value: tweets.map((tweet, i) => ({
-        content: tweet.content,
-        image: tweet.images || [],
-        delay: i === 0 ? undefined : 2000
-      })),
-      settings: { __type: 'EmptySettings' }
-    }]
-  };
+```bash
+# Generate a thread JSON file
+cat > thread.json << 'EOF'
+{
+  "type": "now",
+  "date": "2024-12-31T12:00:00Z",
+  "shortLink": true,
+  "tags": [],
+  "posts": [{
+    "integration": { "id": "twitter-123" },
+    "value": [
+      { "content": "Tweet 1", "image": [] },
+      { "content": "Tweet 2", "image": [], "delay": 2000 },
+      { "content": "Tweet 3", "image": [], "delay": 2000 }
+    ],
+    "settings": { "__type": "EmptySettings" }
+  }]
 }
+EOF
 
-const thread = createThreadPost([
-  { content: 'Tweet 1', images: [...] },
-  { content: 'Tweet 2', images: [...] },
-  { content: 'Tweet 3', images: [...] }
-], 'twitter-123');
-
-fs.writeFileSync('thread.json', JSON.stringify(thread, null, 2));
+# Post using the JSON file
+postiz posts:create --json thread.json
 ```
 
 ## Error Handling

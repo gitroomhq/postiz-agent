@@ -198,35 +198,8 @@ postiz posts:create \
 
 ### Generating Commands
 
-```javascript
-function buildPostCommand(posts, integrationId) {
-  const parts = ['postiz posts:create'];
-
-  posts.forEach(post => {
-    parts.push(`-c "${post.content.replace(/"/g, '\\"')}"`);
-    if (post.media && post.media.length > 0) {
-      parts.push(`-m "${post.media.join(',')}"`);
-    }
-  });
-
-  parts.push(`-i "${integrationId}"`);
-
-  return parts.join(' \\\n  ');
-}
-
-// Usage
-const posts = [
-  { content: "Main post", media: ["img1.jpg", "img2.jpg"] },
-  { content: "Comment; with semicolon!", media: ["img3.jpg"] },
-  { content: "Another comment", media: [] }
-];
-
-const command = buildPostCommand(posts, "twitter-123");
-console.log(command);
-```
-
-Output:
 ```bash
+# Build a multi-post command with media
 postiz posts:create \
   -c "Main post" \
   -m "img1.jpg,img2.jpg" \

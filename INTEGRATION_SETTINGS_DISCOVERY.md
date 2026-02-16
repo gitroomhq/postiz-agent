@@ -272,37 +272,39 @@ AI agents can call this endpoint to:
 - Validate settings before posting
 - Adapt to platform-specific requirements
 
-```javascript
-// Get settings schema
-const settings = await execSync(
-  `postiz integrations:settings ${integrationId}`,
-  { encoding: 'utf-8' }
-);
-const schema = JSON.parse(settings);
+```bash
+# Get settings schema
+INTEGRATION_ID="your-integration-id"
+SETTINGS=$(postiz integrations:settings "$INTEGRATION_ID")
 
-// Check max length
-if (content.length > schema.output.maxLength) {
-  content = content.substring(0, schema.output.maxLength);
-}
+# Extract max length
+MAX_LENGTH=$(echo "$SETTINGS" | jq '.output.maxLength')
 
-// Use required settings
-const requiredSettings = schema.output.settings.required || [];
+# Check and truncate content if needed
+CONTENT="Your post content"
+if [ ${#CONTENT} -gt "$MAX_LENGTH" ]; then
+  CONTENT="${CONTENT:0:$MAX_LENGTH}"
+fi
+
+# List required settings
+echo "$SETTINGS" | jq '.output.settings.required // []'
 ```
 
 ### 4. Form Generation
 
 Use the schema to generate UI forms:
 
-```javascript
-const settings = await getIntegrationSettings('reddit-123');
-const schema = settings.output.settings;
+```bash
+# Inspect the settings schema for form generation
+postiz integrations:settings reddit-123 | jq '.output.settings'
 
-// Generate form fields from schema
-schema.properties.subreddit.items.properties.value.properties
-// → subreddit (text, minLength: 2)
-// → title (text, minLength: 2)
-// → type (select: text/link)
-// → etc.
+# Extract specific field properties
+postiz integrations:settings reddit-123 \
+  | jq '.output.settings.properties.subreddit.items.properties.value.properties'
+# → subreddit (text, minLength: 2)
+# → title (text, minLength: 2)
+# → type (select: text/link)
+# → etc.
 ```
 
 ## Combined Workflow

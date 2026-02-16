@@ -156,14 +156,10 @@ postiz upload ./image.png
 
 ### AI Agent Usage
 
-```javascript
-const { execSync } = require('child_process');
-
-function postToSocial(content) {
-  return execSync(`postiz posts:create -c "${content}"`, {
-    env: { ...process.env, POSTIZ_API_KEY: 'your_key' }
-  });
-}
+```bash
+# Post to social media
+export POSTIZ_API_KEY="your_key"
+postiz posts:create -c "Your content here"
 ```
 
 ## ✨ Example Files
