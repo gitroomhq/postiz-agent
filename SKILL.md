@@ -14,6 +14,9 @@ pnpm install -g postiz
 ```
 
 npm release: https://www.npmjs.com/package/postiz
+postiz github: https://github.com/gitroomhq/postiz-app
+postiz cli github: https://github.com/gitroomhq/postiz-app
+official website: https://postiz.com
 ---
 
 
