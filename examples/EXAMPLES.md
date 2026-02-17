@@ -19,7 +19,7 @@ The Postiz API supports a rich post structure:
         {
           content: string,            // Post/comment text
           image: MediaDto[],          // Multiple media attachments
-          delay?: number              // Delay in ms before posting (for comments)
+          delay?: number              // Delay in minutes before posting (for comments)
         },
         // ... more comments
       ],
@@ -137,7 +137,7 @@ This creates a 5-part Twitter thread, with each tweet having its own image and a
           "path": "https://..."      // URL to the image
         }
       ],
-      "delay": 5000                  // Optional delay in milliseconds
+      "delay": 5                     // Optional delay in minutes
     }
   ],
   "settings": {

@@ -43,9 +43,9 @@ yargs(hideBin(process.argv))
         })
         .option('delay', {
           alias: 'd',
-          describe: 'Delay in milliseconds between comments (default: 5000)',
+          describe: 'Delay in minutes between comments (default: 0)',
           type: 'number',
-          default: 5000,
+          default: 0,
         })
         .option('json', {
           alias: 'j',
@@ -94,8 +94,8 @@ yargs(hideBin(process.argv))
           'Comments can contain semicolons'
         )
         .example(
-          '$0 posts:create -c "Thread 1/3" -c "Thread 2/3" -c "Thread 3/3" -d 2000 -s "2024-12-31T12:00:00Z" -i "twitter-123"',
-          'Twitter thread with 2s delay'
+          '$0 posts:create -c "Thread 1/3" -c "Thread 2/3" -c "Thread 3/3" -d 5 -s "2024-12-31T12:00:00Z" -i "twitter-123"',
+          'Twitter thread with 5 minute delay'
         )
         .example(
           '$0 posts:create --json ./post.json',

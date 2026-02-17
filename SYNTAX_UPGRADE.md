@@ -161,7 +161,7 @@ postiz posts:create \
 | `--media` | `-m` | ✅ Yes | Comma-separated media URLs |
 | `--integrations` | `-i` | ❌ No | Integration IDs |
 | `--schedule` | `-s` | ❌ No | ISO 8601 date |
-| `--delay` | `-d` | ❌ No | Delay between comments (ms, default: 5000) |
+| `--delay` | `-d` | ❌ No | Delay between comments (minutes, default: 0) |
 | `--shortLink` | - | ❌ No | Use URL shortener (default: true) |
 | `--json` | `-j` | ❌ No | Load from JSON file |
 
@@ -174,11 +174,11 @@ postiz posts:create \
   -c "Main" \
   -c "Comment 1" \
   -c "Comment 2" \
-  -d 10000 \    # 10 seconds between each
+  -d 10 \    # 10 minutes between each
   -i "twitter-123"
 ```
 
-**Default:** 5000ms (5 seconds)
+**Default:** 0 (no delay)
 
 ## Command Line vs JSON
 

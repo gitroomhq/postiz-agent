@@ -161,7 +161,7 @@ postiz posts:create \
 | `--media` | `-m` | Comma-separated media URLs | ✅ Yes |
 | `--integrations` | `-i` | Comma-separated integration IDs | ❌ No |
 | `--schedule` | `-s` | ISO 8601 date (schedule post) | ❌ No |
-| `--delay` | `-d` | Delay between comments (ms) | ❌ No |
+| `--delay` | `-d` | Delay between comments (minutes) | ❌ No |
 | `--shortLink` | - | Use URL shortener | ❌ No |
 | `--json` | `-j` | Load from JSON file | ❌ No |
 
@@ -183,18 +183,18 @@ postiz posts:create \
 
 ## Delay Between Comments
 
-Use `-d` or `--delay` to set the delay (in milliseconds) between comments:
+Use `-d` or `--delay` to set the delay (in minutes) between comments:
 
 ```bash
 postiz posts:create \
   -c "Main post" \
   -c "Comment 1" \
   -c "Comment 2" \
-  -d 10000 \       # 10 seconds between each
+  -d 10 \       # 10 minutes between each
   -i "twitter-123"
 ```
 
-**Default:** 5000ms (5 seconds)
+**Default:** 0 (no delay)
 
 ## Comparison: Old vs New Syntax
 

@@ -126,7 +126,7 @@ postiz posts:create --json post.json
 - `-t, --type` - Post type: "schedule" or "draft" (default: "schedule")
 - `-m, --media` - Comma-separated media URLs for corresponding `-c`
 - `-i, --integrations` - Comma-separated integration IDs (required)
-- `-d, --delay` - Delay between comments in milliseconds (default: 5000)
+- `-d, --delay` - Delay between comments in minutes (default: 0)
 - `--settings` - Platform-specific settings as JSON string
 - `-j, --json` - Path to JSON file with full post structure
 - `--shortLink` - Use short links (default: true)

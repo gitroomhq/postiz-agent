@@ -462,7 +462,7 @@ postiz posts:create \
   -c "Comment 1" -m "comment-img.jpg" \
   -c "Comment 2" -m "another.jpg,more.jpg" \
   -s "2024-12-31T12:00:00Z" \
-  -d 5000 \  # Delay between comments in ms
+  -d 5 \  # Delay between comments in minutes
   -i "integration-id"
 ```
 
@@ -472,8 +472,8 @@ Internally creates:
   "posts": [{
     "value": [
       { "content": "Main post", "image": ["image1.jpg", "image2.jpg"] },
-      { "content": "Comment 1", "image": ["comment-img.jpg"], "delay": 5000 },
-      { "content": "Comment 2", "image": ["another.jpg", "more.jpg"], "delay": 5000 }
+      { "content": "Comment 1", "image": ["comment-img.jpg"], "delay": 5 },
+      { "content": "Comment 2", "image": ["another.jpg", "more.jpg"], "delay": 5 }
     ]
   }]
 }

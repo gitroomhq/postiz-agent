@@ -27,7 +27,7 @@ The Postiz CLI **fully supports** the complete API structure including:
 - Scheduled posting with precise timestamps
 - URL shortening support
 - Tags and metadata
-- Delays between comments (in milliseconds)
+- Delays between comments (in minutes)
 - Draft mode for review before posting
 
 ## Usage Modes
@@ -95,14 +95,14 @@ postiz posts:create --json complex-post.json
         "image": [
           { "id": "f1", "path": "features-screenshot.jpg" }
         ],
-        "delay": 3600000
+        "delay": 60
       },
       {
         "content": "🎁 Limited time: 50% off!",
         "image": [
           { "id": "o1", "path": "special-offer.jpg" }
         ],
-        "delay": 7200000
+        "delay": 120
       }
     ]
   }]
@@ -168,7 +168,7 @@ postiz posts:create --json complex-post.json
         {
           "content": "Thread continuation with details",
           "image": [{ "id": "t2", "path": "twitter-details.jpg" }],
-          "delay": 5000
+          "delay": 5
         }
       ]
     },
@@ -229,7 +229,7 @@ postiz posts:create --json complex-post.json
         alt?: string,
         thumbnail?: string
       }>,
-      delay?: number,        // Milliseconds
+      delay?: number,        // Minutes
       id?: string
     }>,
     settings: {

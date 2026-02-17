@@ -102,8 +102,7 @@ export async function createPost(args: any) {
       return {
         content: content,
         image: images,
-        // Add delay for all items except the first (main post)
-        ...(index > 0 && { delay: args.delay || 5000 }),
+        delay: args?.delay || 0,
       };
     });
 
