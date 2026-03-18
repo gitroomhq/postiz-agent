@@ -4,6 +4,7 @@ import { createPost, listPosts, deletePost, getMissingContent, connectPost } fro
 import { listIntegrations, getIntegrationSettings, triggerIntegrationTool } from './commands/integrations';
 import { getAnalytics, getPostAnalytics } from './commands/analytics';
 import { uploadFile } from './commands/upload';
+import { getGhostStatus, changeGhostStatus, deleteGhostPost, reschedulePost } from './commands/ghost';
 import type { Argv } from 'yargs';
 
 yargs(hideBin(process.argv))
@@ -318,6 +319,142 @@ yargs(hideBin(process.argv))
         .example('$0 upload ./image.png', 'Upload an image');
     },
     uploadFile as any
+  )
+  // Ghost-specific post management commands
+  .command(
+    'ghost:status <id> <postId>',
+    'Get the status of a Ghost post (draft, published, scheduled)',
+    (yargs: Argv) => {
+      return yargs
+        .positional('id', {
+          describe: 'Integration ID',
+          type: 'string',
+        })
+        .positional('postId', {
+          describe: 'Ghost post ID',
+          type: 'string',
+        })
+        .example(
+          '$0 ghost:status ghost-abc123 64a1b2c3d4e5f6',
+          'Get status of a Ghost post'
+        );
+    },
+    getGhostStatus as any
+  )
+  .command(
+    'ghost:publish <id> <postId>',
+    'Publish a Ghost draft immediately',
+    (yargs: Argv) => {
+      return yargs
+        .positional('id', {
+          describe: 'Integration ID',
+          type: 'string',
+        })
+        .positional('postId', {
+          describe: 'Ghost post ID',
+          type: 'string',
+        })
+        .example(
+          '$0 ghost:publish ghost-abc123 64a1b2c3d4e5f6',
+          'Publish a Ghost draft'
+        );
+    },
+    (args: any) => changeGhostStatus({ ...args, status: 'published' }) as any
+  )
+  .command(
+    'ghost:unpublish <id> <postId>',
+    'Convert a published Ghost post back to draft',
+    (yargs: Argv) => {
+      return yargs
+        .positional('id', {
+          describe: 'Integration ID',
+          type: 'string',
+        })
+        .positional('postId', {
+          describe: 'Ghost post ID',
+          type: 'string',
+        })
+        .example(
+          '$0 ghost:unpublish ghost-abc123 64a1b2c3d4e5f6',
+          'Unpublish a Ghost post'
+        );
+    },
+    (args: any) => changeGhostStatus({ ...args, status: 'draft' }) as any
+  )
+  .command(
+    'ghost:schedule <id> <postId>',
+    'Schedule a Ghost post for future publication',
+    (yargs: Argv) => {
+      return yargs
+        .positional('id', {
+          describe: 'Integration ID',
+          type: 'string',
+        })
+        .positional('postId', {
+          describe: 'Ghost post ID',
+          type: 'string',
+        })
+        .option('published-at', {
+          alias: 'p',
+          describe: 'Publication date/time (ISO 8601 format)',
+          type: 'string',
+          demandOption: true,
+        })
+        .example(
+          '$0 ghost:schedule ghost-abc123 64a1b2c3d4e5f6 -p "2024-12-31T12:00:00Z"',
+          'Schedule a Ghost post'
+        );
+    },
+    (args: any) => changeGhostStatus({ ...args, status: 'scheduled', publishedAt: args.publishedAt }) as any
+  )
+  .command(
+    'ghost:delete <id> <postId>',
+    'Delete a Ghost post',
+    (yargs: Argv) => {
+      return yargs
+        .positional('id', {
+          describe: 'Integration ID',
+          type: 'string',
+        })
+        .positional('postId', {
+          describe: 'Ghost post ID',
+          type: 'string',
+        })
+        .example(
+          '$0 ghost:delete ghost-abc123 64a1b2c3d4e5f6',
+          'Delete a Ghost post'
+        );
+    },
+    deleteGhostPost as any
+  )
+  .command(
+    'posts:reschedule <id>',
+    'Reschedule a post to a new date',
+    (yargs: Argv) => {
+      return yargs
+        .positional('id', {
+          describe: 'Post ID',
+          type: 'string',
+        })
+        .option('date', {
+          alias: 'd',
+          describe: 'New schedule date (ISO 8601 format)',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('action', {
+          alias: 'a',
+          describe: 'Action: schedule (set state to QUEUE) or update (just change date)',
+          type: 'string',
+          choices: ['schedule', 'update'],
+          default: 'schedule',
+        })
+        .example(
+          '$0 posts:reschedule abc123 -d "2024-12-31T12:00:00Z"',
+          'Reschedule a post'
+        );
+    },
+    reschedulePost as any
   )
   .demandCommand(1, 'You need at least one command')
   .help()
