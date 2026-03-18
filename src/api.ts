@@ -33,7 +33,17 @@ export class PostizAPI {
         throw new Error(`API Error (${response.status}): ${error}`);
       }
 
-      return await response.json();
+      // Handle 204 No Content and empty responses
+      if (response.status === 204) {
+        return null;
+      }
+
+      const text = await response.text();
+      if (!text) {
+        return null;
+      }
+
+      return JSON.parse(text);
     } catch (error: any) {
       throw new Error(`Request failed: ${error.message}`);
     }

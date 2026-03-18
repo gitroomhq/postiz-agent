@@ -75,27 +75,27 @@ yargs(hideBin(process.argv))
           return true;
         })
         .example(
-          '$0 posts:create -c "Hello World!" -s "2024-12-31T12:00:00Z" -i "twitter-123"',
+          '$0 posts:create -c "Hello World!" -s "2030-12-31T12:00:00Z" -i "twitter-123"',
           'Simple scheduled post'
         )
         .example(
-          '$0 posts:create -c "Draft post" -s "2024-12-31T12:00:00Z" -t draft -i "twitter-123"',
+          '$0 posts:create -c "Draft post" -s "2030-12-31T12:00:00Z" -t draft -i "twitter-123"',
           'Create draft post'
         )
         .example(
-          '$0 posts:create -c "Main post" -m "img1.jpg,img2.jpg" -s "2024-12-31T12:00:00Z" -i "twitter-123"',
+          '$0 posts:create -c "Main post" -m "img1.jpg,img2.jpg" -s "2030-12-31T12:00:00Z" -i "twitter-123"',
           'Post with multiple images'
         )
         .example(
-          '$0 posts:create -c "Main post" -m "img1.jpg" -c "First comment" -m "img2.jpg" -c "Second comment" -m "img3.jpg,img4.jpg" -s "2024-12-31T12:00:00Z" -i "twitter-123"',
+          '$0 posts:create -c "Main post" -m "img1.jpg" -c "First comment" -m "img2.jpg" -c "Second comment" -m "img3.jpg,img4.jpg" -s "2030-12-31T12:00:00Z" -i "twitter-123"',
           'Post with comments, each having their own media'
         )
         .example(
-          '$0 posts:create -c "Main" -c "Comment with semicolon; see?" -c "Another!" -s "2024-12-31T12:00:00Z" -i "twitter-123"',
+          '$0 posts:create -c "Main" -c "Comment with semicolon; see?" -c "Another!" -s "2030-12-31T12:00:00Z" -i "twitter-123"',
           'Comments can contain semicolons'
         )
         .example(
-          '$0 posts:create -c "Thread 1/3" -c "Thread 2/3" -c "Thread 3/3" -d 5 -s "2024-12-31T12:00:00Z" -i "twitter-123"',
+          '$0 posts:create -c "Thread 1/3" -c "Thread 2/3" -c "Thread 3/3" -d 5 -s "2030-12-31T12:00:00Z" -i "twitter-123"',
           'Twitter thread with 5 minute delay'
         )
         .example(
@@ -103,15 +103,15 @@ yargs(hideBin(process.argv))
           'Complex post from JSON file'
         )
         .example(
-          '$0 posts:create -c "Post to subreddit" -s "2024-12-31T12:00:00Z" --settings \'{"subreddit":[{"value":{"subreddit":"programming","title":"My Title","type":"text","url":"","is_flair_required":false}}]}\' -i "reddit-123"',
+          '$0 posts:create -c "Post to subreddit" -s "2030-12-31T12:00:00Z" --settings \'{"subreddit":[{"value":{"subreddit":"programming","title":"My Title","type":"text","url":"","is_flair_required":false}}]}\' -i "reddit-123"',
           'Reddit post with specific subreddit settings'
         )
         .example(
-          '$0 posts:create -c "Video description" -s "2024-12-31T12:00:00Z" --settings \'{"title":"My Video","type":"public","tags":[{"value":"tech","label":"Tech"}]}\' -i "youtube-123"',
+          '$0 posts:create -c "Video description" -s "2030-12-31T12:00:00Z" --settings \'{"title":"My Video","type":"public","tags":[{"value":"tech","label":"Tech"}]}\' -i "youtube-123"',
           'YouTube post with title and tags'
         )
         .example(
-          '$0 posts:create -c "Tweet content" -s "2024-12-31T12:00:00Z" --settings \'{"who_can_reply_post":"everyone"}\' -i "twitter-123"',
+          '$0 posts:create -c "Tweet content" -s "2030-12-31T12:00:00Z" --settings \'{"who_can_reply_post":"everyone"}\' -i "twitter-123"',
           'X (Twitter) post with reply settings'
         );
     },
@@ -401,7 +401,7 @@ yargs(hideBin(process.argv))
           demandOption: true,
         })
         .example(
-          '$0 ghost:schedule ghost-abc123 64a1b2c3d4e5f6 -p "2024-12-31T12:00:00Z"',
+          '$0 ghost:schedule ghost-abc123 64a1b2c3d4e5f6 -p "2030-12-31T12:00:00Z"',
           'Schedule a Ghost post'
         );
     },
@@ -450,7 +450,7 @@ yargs(hideBin(process.argv))
           default: 'schedule',
         })
         .example(
-          '$0 posts:reschedule abc123 -d "2024-12-31T12:00:00Z"',
+          '$0 posts:reschedule abc123 -d "2030-12-31T12:00:00Z"',
           'Reschedule a post'
         );
     },

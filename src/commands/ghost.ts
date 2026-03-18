@@ -56,6 +56,12 @@ export async function changeGhostStatus(args: any) {
     process.exit(1);
   }
 
+  // Validate publishedAt is provided when scheduling
+  if (newStatus === 'scheduled' && !args.publishedAt) {
+    console.error('❌ --published-at is required when status is "scheduled"');
+    process.exit(1);
+  }
+
   try {
     const result = await api.changePostStatus(
       args.id,
