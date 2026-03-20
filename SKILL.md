@@ -2,7 +2,7 @@
 name: postiz
 description: Postiz is a tool to schedule social media and chat posts to 28+ channels X, LinkedIn, LinkedIn Page, Reddit, Instagram, Facebook Page, Threads, YouTube, Google My Business, TikTok, Pinterest, Dribbble, Discord, Slack, Kick, Twitch, Mastodon, Bluesky, Lemmy, Farcaster, Telegram, Nostr, VK, Medium, Dev.to, Hashnode, WordPress, ListMonk
 homepage: https://docs.postiz.com/public-api/introduction
-metadata: {"clawdbot":{"emoji":"🌎","requires":{"bins":[],"env":["POSTIZ_API_URL","POSTIZ_API_KEY"]}}}
+metadata: {"openclaw":{"emoji":"🌎","requires":{"bins":["postiz"],"env":["POSTIZ_API_URL","POSTIZ_API_KEY"]}}}
 ---
 
 ## Install Postiz if it doesn't exist
