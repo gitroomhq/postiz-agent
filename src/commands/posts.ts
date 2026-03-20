@@ -1,6 +1,51 @@
 import { PostizAPI } from '../api';
 import { getConfig } from '../config';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync, writeFileSync } from 'fs';
+import { homedir } from 'os';
+import { join } from 'path';
+
+const HISTORY_FILE = join(homedir(), '.postiz-history.json');
+
+interface PostHistoryEntry {
+  postizId: string;
+  providerPostId?: string;
+  releaseId?: string;
+  releaseURL?: string;
+  integrationId: string;
+  provider: string;
+  title?: string;
+  createdAt: string;
+  scheduledAt?: string;
+  status: 'draft' | 'scheduled' | 'published' | 'failed';
+  type: 'post' | 'carousel' | 'gif';
+}
+
+function getHistory(): PostHistoryEntry[] {
+  if (!existsSync(HISTORY_FILE)) {
+    return [];
+  }
+  try {
+    const content = readFileSync(HISTORY_FILE, 'utf-8');
+    return JSON.parse(content);
+  } catch {
+    return [];
+  }
+}
+
+function saveHistory(history: PostHistoryEntry[]): void {
+  writeFileSync(HISTORY_FILE, JSON.stringify(history, null, 2));
+}
+
+function addToHistory(entry: PostHistoryEntry): void {
+  const history = getHistory();
+  history.unshift(entry); // Add to beginning
+
+  // Keep only last 100 entries
+  if (history.length > 100) {
+    history.splice(100);
+  }
+  saveHistory(history);
+}
 
 export async function getMissingContent(args: any) {
   const config = getConfig();
@@ -139,6 +184,38 @@ export async function createPost(args: any) {
     const result = await api.createPost(postData);
     console.log('✅ Post created successfully!');
     console.log(JSON.stringify(result, null, 2));
+
+    // Save to local history
+    try {
+      // Extract fields from result - Postiz API response structure
+      const postizId = result?.id || result?.postId || result?._id;
+      const integrationId = postData.posts?.[0]?.integration?.id || '';
+      const scheduledAt = postData.date;
+
+      // Extract provider info from result
+      const providerResults = result?.posts || result?.results || [];
+      const firstResult = providerResults[0] || {};
+
+      addToHistory({
+        postizId: postizId || 'unknown',
+        providerPostId: firstResult.providerPostId || firstResult.id,
+        releaseId: firstResult.releaseId || result?.releaseId,
+        releaseURL: firstResult.releaseURL || result?.releaseURL,
+        integrationId: integrationId,
+        provider: firstResult.provider || firstResult.__type || 'unknown',
+        title: postData.title || (contents?.[0] || '').substring(0, 50),
+        createdAt: new Date().toISOString(),
+        scheduledAt: scheduledAt,
+        status: args.type === 'draft' ? 'draft' : 'scheduled',
+        type: 'post',
+      });
+
+      console.log(`📁 Post saved to history (~/.postiz-history.json)`);
+    } catch (historyError: any) {
+      // Don't fail the main operation if history fails
+      console.warn(`⚠️  Could not save to history: ${historyError.message}`);
+    }
+
     return result;
   } catch (error: any) {
     console.error('❌ Failed to create post:', error.message);
@@ -195,4 +272,106 @@ export async function deletePost(args: any) {
     console.error('❌ Failed to delete post:', error.message);
     process.exit(1);
   }
+}
+
+/**
+ * Show local post history (posts created via this CLI)
+ * This is different from listPosts which queries the Postiz API
+ */
+export async function historyPosts(args: any) {
+  const history = getHistory();
+
+  if (history.length === 0) {
+    console.log('📋 No post history found.');
+    console.log('');
+    console.log('Posts created via this CLI will be tracked here.');
+    console.log('History file: ~/.postiz-history.json');
+    return;
+  }
+
+  // Filter by status if provided
+  let filtered = history;
+  if (args.status) {
+    filtered = filtered.filter(h => h.status === args.status);
+  }
+
+  // Filter by provider if provided
+  if (args.provider) {
+    const providerLower = args.provider.toLowerCase();
+    filtered = filtered.filter(h => h.provider.toLowerCase().includes(providerLower));
+  }
+
+  // Limit results
+  const limit = args.limit ? parseInt(args.limit, 10) : 20;
+  filtered = filtered.slice(0, limit);
+
+  console.log(`📋 Post History (${filtered.length} of ${history.length} entries):\n`);
+
+  // Output as table
+  if (args.json) {
+    console.log(JSON.stringify(filtered, null, 2));
+  } else {
+    for (const entry of filtered) {
+      console.log(`┌─────────────────────────────────────────────────────────────`);
+      console.log(`│ Postiz ID:    ${entry.postizId}`);
+      if (entry.providerPostId) {
+        console.log(`│ Provider ID:  ${entry.providerPostId}`);
+      }
+      if (entry.releaseURL) {
+        console.log(`│ URL:          ${entry.releaseURL}`);
+      }
+      console.log(`│ Provider:     ${entry.provider}`);
+      console.log(`│ Integration:   ${entry.integrationId}`);
+      if (entry.title) {
+        console.log(`│ Title:        ${entry.title}`);
+      }
+      console.log(`│ Status:       ${entry.status}`);
+      if (entry.scheduledAt) {
+        console.log(`│ Scheduled:    ${entry.scheduledAt}`);
+      }
+      console.log(`│ Created:      ${entry.createdAt}`);
+      console.log(`└─────────────────────────────────────────────────────────────`);
+      console.log('');
+    }
+  }
+
+  console.log(`📁 History file: ~/.postiz-history.json`);
+  console.log(`💡 Use --json for machine-readable output`);
+  console.log(`💡 Use --status <status> to filter by status`);
+  console.log(`💡 Use --provider <name> to filter by provider`);
+}
+
+/**
+ * Get a specific post from history by Postiz ID
+ */
+export async function getPostFromHistory(args: any) {
+  if (!args.id) {
+    console.error('❌ Post ID is required');
+    process.exit(1);
+  }
+
+  const history = getHistory();
+  const entry = history.find(h => h.postizId === args.id || h.providerPostId === args.id);
+
+  if (!entry) {
+    console.error(`❌ Post not found in history: ${args.id}`);
+    process.exit(1);
+  }
+
+  console.log(JSON.stringify(entry, null, 2));
+  return entry;
+}
+
+/**
+ * Clear post history
+ */
+export async function clearHistory(args: any) {
+  if (args.confirm !== true) {
+    console.log('⚠️  This will delete all post history from ~/.postiz-history.json');
+    console.log('Use --confirm to proceed');
+    process.exit(1);
+  }
+
+  saveHistory([]);
+  console.log('✅ Post history cleared');
 }

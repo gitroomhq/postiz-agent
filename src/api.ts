@@ -33,7 +33,17 @@ export class PostizAPI {
         throw new Error(`API Error (${response.status}): ${error}`);
       }
 
-      return await response.json();
+      // Handle 204 No Content and empty responses
+      if (response.status === 204) {
+        return null;
+      }
+
+      const text = await response.text();
+      if (!text) {
+        return null;
+      }
+
+      return JSON.parse(text);
     } catch (error: any) {
       throw new Error(`Request failed: ${error.message}`);
     }
@@ -182,6 +192,55 @@ export class PostizAPI {
     return this.request(`/public/v1/integration-trigger/${integrationId}`, {
       method: 'POST',
       body: JSON.stringify({ methodName, data }),
+    });
+  }
+
+  // Ghost-specific methods for post management
+  
+  /**
+   * Update a post's date/schedule
+   * Works for Ghost and other providers that support rescheduling
+   */
+  async updatePostDate(postId: string, date: string, action: 'schedule' | 'update' = 'schedule') {
+    return this.request(`/public/v1/posts/${postId}/date`, {
+      method: 'PUT',
+      body: JSON.stringify({ date, action }),
+    });
+  }
+
+  /**
+   * Get the current status of a post from the provider
+   * Returns: draft, published, scheduled, etc.
+   */
+  async getPostStatus(integrationId: string, providerPostId: string) {
+    return this.request(`/public/v1/integration/${integrationId}/post/${providerPostId}/status`, {
+      method: 'GET',
+    });
+  }
+
+  /**
+   * Change a post's status on the provider
+   * For Ghost: draft -> published, scheduled -> draft, published -> draft
+   */
+  async changePostStatus(
+    integrationId: string,
+    providerPostId: string,
+    newStatus: 'draft' | 'published' | 'scheduled',
+    publishedAt?: string
+  ) {
+    return this.request(`/public/v1/integration/${integrationId}/post/${providerPostId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status: newStatus, publishedAt }),
+    });
+  }
+
+  /**
+   * Delete a post from the provider
+   * Useful for canceling scheduled posts
+   */
+  async deleteProviderPost(integrationId: string, providerPostId: string) {
+    return this.request(`/public/v1/integration/${integrationId}/post/${providerPostId}`, {
+      method: 'DELETE',
     });
   }
 }
