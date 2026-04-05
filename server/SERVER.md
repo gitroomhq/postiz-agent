@@ -29,15 +29,15 @@ CLI                        Auth Server                    Postiz
 
 ## Environment Variables
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `DATABASE_URL` | Yes | - | Postgres connection string |
-| `POSTIZ_OAUTH_CLIENT_ID` | Yes | - | OAuth app client ID from Postiz |
-| `POSTIZ_OAUTH_CLIENT_SECRET` | Yes | - | OAuth app client secret from Postiz |
-| `PORT` | No | `3111` | Server port |
-| `SERVER_URL` | No | `http://localhost:{PORT}` | Public URL of this server (used for generating links) |
-| `POSTIZ_FRONTEND_URL` | No | `https://app.postiz.com` | Postiz frontend URL for OAuth redirects |
-| `POSTIZ_API_URL` | No | `https://api.postiz.com` | Postiz API URL for token exchange |
+| Variable | Required | Default                       | Description |
+|----------|----------|-------------------------------|-------------|
+| `DATABASE_URL` | Yes | -                             | Postgres connection string |
+| `POSTIZ_OAUTH_CLIENT_ID` | Yes | -                             | OAuth app client ID from Postiz |
+| `POSTIZ_OAUTH_CLIENT_SECRET` | Yes | -                             | OAuth app client secret from Postiz |
+| `PORT` | No | `3111`                        | Server port |
+| `SERVER_URL` | No | `http://localhost:{PORT}`     | Public URL of this server (used for generating links) |
+| `POSTIZ_FRONTEND_URL` | No | `https://platform.postiz.com` | Postiz frontend URL for OAuth redirects |
+| `POSTIZ_API_URL` | No | `https://api.postiz.com`      | Postiz API URL for token exchange |
 
 ## Setup
 
