@@ -1,0 +1,21 @@
+{
+  "name": "postiz-cli-auth-server",
+  "version": "1.0.0",
+  "description": "Device flow auth server for Postiz CLI",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "tsx watch index.ts",
+    "start": "tsx index.ts",
+    "build": "tsc",
+    "start:prod": "node dist/index.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

@@ -50,6 +50,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "@types/pg": "^8.20.0",
     "node-fetch": "^3.3.2",
     "yargs": "^17.7.2"
   },

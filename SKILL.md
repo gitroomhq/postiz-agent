@@ -2,7 +2,7 @@
 name: postiz
 description: Postiz is a tool to schedule social media and chat posts to 28+ channels X, LinkedIn, LinkedIn Page, Reddit, Instagram, Facebook Page, Threads, YouTube, Google My Business, TikTok, Pinterest, Dribbble, Discord, Slack, Kick, Twitch, Mastodon, Bluesky, Lemmy, Farcaster, Telegram, Nostr, VK, Medium, Dev.to, Hashnode, WordPress, ListMonk
 homepage: https://docs.postiz.com/public-api/introduction
-metadata: {"clawdbot":{"emoji":"🌎","requires":{"bins":[],"env":["POSTIZ_API_URL","POSTIZ_API_KEY"]}}}
+metadata: {"openclaw":{"emoji":"🌎","requires":{"bins":[],"env":["POSTIZ_API_URL"]}}}
 ---
 
 ## Install Postiz if it doesn't exist
@@ -28,36 +28,58 @@ official website: https://postiz.com
 
 ---
 
+## ⚠️ Authentication Required
+
+**You MUST authenticate before running any Postiz CLI command.** All commands will fail without valid credentials.
+
+Before doing anything else, check auth status:
+```bash
+postiz auth:status
+```
+
+If not authenticated, either:
+1. **OAuth2:** `postiz auth:login`
+2. **API Key:** `export POSTIZ_API_KEY=your_api_key`
+
+**Do NOT proceed with any other commands until authentication is confirmed.**
+
+---
+
 ## Core Workflow
 
 The fundamental pattern for using Postiz CLI:
 
-1. **Discover** - List integrations and get their settings
-2. **Fetch** - Use integration tools to retrieve dynamic data (flairs, playlists, companies)
-3. **Prepare** - Upload media files if needed
-4. **Post** - Create posts with content, media, and platform-specific settings
-5. **Analyze** - Track performance with platform and post-level analytics
-6. **Resolve** - If analytics returns `{"missing": true}`, run `posts:missing` to list provider content, then `posts:connect` to link it
+1. **Authenticate** - Verify or set up authentication (see above)
+2. **Discover** - List integrations and get their settings
+3. **Fetch** - Use integration tools to retrieve dynamic data (flairs, playlists, companies)
+4. **Prepare** - Upload media files if needed
+5. **Post** - Create posts with content, media, and platform-specific settings
+6. **Analyze** - Track performance with platform and post-level analytics
+7. **Resolve** - If analytics returns `{"missing": true}`, run `posts:missing` to list provider content, then `posts:connect` to link it
 
 ```bash
-# 1. Discover
+# 1. Authenticate
+postiz auth:status
+# If not authenticated: postiz auth:login --client-id <id> --client-secret <secret>
+
+# 2. Discover
 postiz integrations:list
 postiz integrations:settings <integration-id>
 
-# 2. Fetch (if needed)
+# 3. Fetch (if needed)
 postiz integrations:trigger <integration-id> <method> -d '{"key":"value"}'
 
-# 3. Prepare
+# 4. Prepare
 postiz upload image.jpg
 
-# 4. Post
+# 5. Post
 postiz posts:create -c "Content" -m "image.jpg" -i "<integration-id>"
 
-# 5. Analyze
+# 6. Analyze
 postiz analytics:platform <integration-id> -d 30
 postiz analytics:post <post-id> -d 7
 
-# 6. Resolve (if analytics returns {"missing": true})
+# 7. Resolve (if analytics returns {"missing": true})
 postiz posts:missing <post-id>
 postiz posts:connect <post-id> --release-id "<content-id>"
 ```
@@ -66,13 +88,29 @@ postiz posts:connect <post-id> --release-id "<content-id>"
 
 ## Essential Commands
 
-### Setup
+### Authentication
 
+**Option 1: OAuth2 (Recommended)**
 ```bash
-# Required environment variable
-export POSTIZ_API_KEY=your_api_key_here
+# Login via device flow (opens browser, no client ID/secret needed)
+postiz auth:login
 
-# Optional custom API URL
+# Check auth status (verifies credentials are still valid)
+postiz auth:status
+
+# Logout (remove stored credentials)
+postiz auth:logout
+```
+
+Credentials are stored in `~/.postiz/credentials.json`. OAuth2 credentials take priority over API key.
+
+**Option 2: API Key**
+```bash
+export POSTIZ_API_KEY=your_api_key_here
+```
+
+**Optional custom API URL:**
+```bash
 export POSTIZ_API_URL=https://custom-api-url.com
 ```
 
@@ -654,7 +692,7 @@ https://clawhub.ai/nevo-david/agent-media
 
 ## Common Gotchas
 
-1. **API Key not set** - Always `export POSTIZ_API_KEY=key` before using CLI
+1. **Not authenticated** - Run `postiz auth:login` or `export POSTIZ_API_KEY=key` before using CLI
 2. **Invalid integration ID** - Run `integrations:list` to get current IDs
 3. **Settings schema mismatch** - Check `integrations:settings` for required fields
 4. **Media MUST be uploaded to Postiz first** - ⚠️ **CRITICAL:** TikTok, Instagram, YouTube, and many platforms only accept verified URLs. Upload files via `postiz upload` first, then use the returned URL in `-m`. External URLs will be rejected!
@@ -671,10 +709,13 @@ https://clawhub.ai/nevo-david/agent-media
 ## Quick Reference
 
 ```bash
-# Environment
-export POSTIZ_API_KEY=key
+# ⚠️ AUTHENTICATE FIRST - required before any other command
+postiz auth:status                                             # Check if authenticated
+postiz auth:login                                              # OAuth2 device flow login
+postiz auth:logout                                             # Remove credentials
+export POSTIZ_API_KEY=key                                      # Or use API key
 
-# Discovery
+# Discovery (only after auth is confirmed)
 postiz integrations:list                           # Get integration IDs
 postiz integrations:settings <id>                  # Get settings schema
 postiz integrations:trigger <id> <method> -d '{}'  # Fetch dynamic data

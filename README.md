@@ -18,9 +18,30 @@ pnpm install -g postiz
 
 ---
 
-## Setup
+## Authentication
 
-**Required:** Set your Postiz API key
+### Option 1: OAuth2 (Recommended)
+
+Authenticate using the device flow — no client ID or secret needed:
+
+```bash
+postiz auth:login
+```
+
+This will:
+1. Display a one-time code in your terminal
+2. Open your browser to authorize
+3. Automatically save credentials to `~/.postiz/credentials.json`
+
+```bash
+# Check current auth status (verifies credentials are still valid)
+postiz auth:status
+
+# Remove stored credentials
+postiz auth:logout
+```
+
+### Option 2: API Key
 
 ```bash
 export POSTIZ_API_KEY=your_api_key_here
@@ -31,6 +52,8 @@ export POSTIZ_API_KEY=your_api_key_here
 ```bash
 export POSTIZ_API_URL=https://your-custom-api.com
 ```
+
+> **Note:** OAuth2 credentials take priority over the API key when both are present.
 
 ---
 
@@ -526,8 +549,11 @@ The CLI interacts with these Postiz API endpoints:
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `POSTIZ_API_KEY` | ✅ Yes | - | Your Postiz API key |
+| `POSTIZ_API_KEY` | No* | - | Your Postiz API key |
 | `POSTIZ_API_URL` | No | `https://api.postiz.com` | Custom API endpoint |
+| `POSTIZ_AUTH_SERVER` | No | `https://cli-auth.postiz.com` | Custom auth server URL |
+
+*Either OAuth2 (via `postiz auth:login`) or `POSTIZ_API_KEY` is required.
 
 ---
 
@@ -542,7 +568,7 @@ The CLI provides clear error messages with exit codes:
 
 | Error | Solution |
 |-------|----------|
-| `POSTIZ_API_KEY is not set` | Set environment variable: `export POSTIZ_API_KEY=key` |
+| `Not authenticated` | Run `postiz auth:login` or set `POSTIZ_API_KEY` |
 | `Integration not found` | Run `integrations:list` to get valid IDs |
 | `startDate/endDate required` | Use ISO 8601 format: `"2024-12-31T12:00:00Z"` |
 | `Invalid settings` | Check `integrations:settings` for required fields |
@@ -560,8 +586,9 @@ The CLI provides clear error messages with exit codes:
 src/
 ├── index.ts              # CLI entry point with yargs
 ├── api.ts                # PostizAPI client class
-├── config.ts             # Environment configuration
+├── config.ts             # Configuration (OAuth2 + API key)
 └── commands/
+    ├── auth.ts           # OAuth2 authentication (login/logout/status)
     ├── posts.ts          # Post management commands
     ├── integrations.ts   # Integration commands
     ├── analytics.ts      # Analytics commands
@@ -599,8 +626,11 @@ Output in `dist/`:
 ## Quick Reference
 
 ```bash
-# Environment setup
-export POSTIZ_API_KEY=your_key
+# Authentication
+postiz auth:login                                              # OAuth2 device flow
+postiz auth:status                                             # Check auth
+postiz auth:logout                                             # Remove credentials
+export POSTIZ_API_KEY=your_key                                 # Or use API key
 
 # Discovery
 postiz integrations:list                           # List integrations

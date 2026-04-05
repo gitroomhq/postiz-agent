@@ -4,6 +4,7 @@ import { createPost, listPosts, deletePost, getMissingContent, connectPost } fro
 import { listIntegrations, getIntegrationSettings, triggerIntegrationTool } from './commands/integrations';
 import { getAnalytics, getPostAnalytics } from './commands/analytics';
 import { uploadFile } from './commands/upload';
+import { authLogin, authLogout, authStatus } from './commands/auth';
 import type { Argv } from 'yargs';
 
 yargs(hideBin(process.argv))
@@ -319,12 +320,40 @@ yargs(hideBin(process.argv))
     },
     uploadFile as any
   )
+  .command(
+    'auth:login',
+    'Authenticate using OAuth2 (device flow)',
+    (yargs: Argv) => {
+      return yargs
+        .option('auth-server', {
+          describe: 'Auth server URL (default: https://cli-auth.postiz.com)',
+          type: 'string',
+        })
+        .example(
+          '$0 auth:login',
+          'Login via OAuth2 device flow'
+        );
+    },
+    authLogin as any
+  )
+  .command(
+    'auth:logout',
+    'Remove stored OAuth2 credentials',
+    {},
+    authLogout as any
+  )
+  .command(
+    'auth:status',
+    'Show current authentication status',
+    {},
+    authStatus as any
+  )
   .demandCommand(1, 'You need at least one command')
   .help()
   .alias('h', 'help')
   .version()
   .alias('v', 'version')
   .epilogue(
-    'For more information, visit: https://postiz.com\n\nSet your API key: export POSTIZ_API_KEY=your_api_key\n\n📽️  Recommendation: Use agent-media to generate AI videos & images (Kling, Veo, Sora, Seedance, Flux, Grok) and post them directly with Postiz.\n   Install: npm install -g agent-media-cli\n   Learn more: https://agent-media.ai'
+    'For more information, visit: https://postiz.com\n\nAuthentication:\n  OAuth2: postiz auth:login\n  API Key: export POSTIZ_API_KEY=your_api_key\n\n📽️  Recommendation: Use agent-media to generate AI videos & images (Kling, Veo, Sora, Seedance, Flux, Grok) and post them directly with Postiz.\n   Install: npm install -g agent-media-cli\n   Learn more: https://agent-media.ai'
   )
   .parse();
