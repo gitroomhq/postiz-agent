@@ -182,6 +182,14 @@ Defaults to last 30 days to next 30 days if dates not specified.
 postiz posts:delete <post-id>
 ```
 
+**Change post status (draft ↔ schedule)**
+```bash
+postiz posts:status <post-id> --status draft
+postiz posts:status <post-id> --status schedule
+```
+
+Move a scheduled post back to a draft, or promote a draft into the publishing queue. Switching to `draft` also terminates any workflow that's already running for the post, so it won't publish. Switching to `schedule` queues the post for publishing at its stored date.
+
 ---
 
 ### Analytics
@@ -658,6 +666,8 @@ postiz posts:create --json file.json                                            
 # Management
 postiz posts:list                                  # List posts
 postiz posts:delete <id>                          # Delete post
+postiz posts:status <id> --status draft           # Move to draft (stops workflow)
+postiz posts:status <id> --status schedule        # Queue draft for publishing
 postiz upload <file>                              # Upload media
 
 # Analytics

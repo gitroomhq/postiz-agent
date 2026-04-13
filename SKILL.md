@@ -173,6 +173,10 @@ postiz posts:list --startDate "2024-01-01T00:00:00Z" --endDate "2024-12-31T23:59
 
 # Delete post
 postiz posts:delete <post-id>
+
+# Change post status (draft ↔ schedule)
+postiz posts:status <post-id> --status draft     # Move back to draft, terminates any running publish workflow
+postiz posts:status <post-id> --status schedule  # Promote a draft into the publishing queue (uses the post's stored date)
 ```
 
 ### Analytics
@@ -731,6 +735,8 @@ postiz posts:create --json file.json                                            
 # Management
 postiz posts:list                                  # List posts
 postiz posts:delete <id>                          # Delete post
+postiz posts:status <id> --status draft           # Move to draft (stops workflow)
+postiz posts:status <id> --status schedule        # Queue draft for publishing
 postiz upload <file>                              # Upload media
 
 # Analytics

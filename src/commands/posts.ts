@@ -179,6 +179,31 @@ export async function listPosts(args: any) {
   }
 }
 
+export async function changePostStatus(args: any) {
+  const config = getConfig();
+  const api = new PostizAPI(config);
+
+  if (!args.id) {
+    console.error('❌ Post ID is required');
+    process.exit(1);
+  }
+
+  if (args.status !== 'draft' && args.status !== 'schedule') {
+    console.error('❌ --status must be either "draft" or "schedule"');
+    process.exit(1);
+  }
+
+  try {
+    const result = await api.changePostStatus(args.id, args.status);
+    console.log(`✅ Post ${args.id} status changed to ${args.status}`);
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  } catch (error: any) {
+    console.error('❌ Failed to change post status:', error.message);
+    process.exit(1);
+  }
+}
+
 export async function deletePost(args: any) {
   const config = getConfig();
   const api = new PostizAPI(config);

@@ -150,6 +150,13 @@ export class PostizAPI {
     });
   }
 
+  async changePostStatus(postId: string, status: 'draft' | 'schedule') {
+    return this.request(`/public/v1/posts/${postId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    });
+  }
+
   async getAnalytics(integrationId: string, date: string) {
     return this.request(`/public/v1/analytics/${integrationId}?date=${encodeURIComponent(date)}`, {
       method: 'GET',

@@ -1,6 +1,6 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { createPost, listPosts, deletePost, getMissingContent, connectPost } from './commands/posts';
+import { createPost, listPosts, deletePost, getMissingContent, connectPost, changePostStatus } from './commands/posts';
 import { listIntegrations, getIntegrationSettings, triggerIntegrationTool } from './commands/integrations';
 import { getAnalytics, getPostAnalytics } from './commands/analytics';
 import { uploadFile } from './commands/upload';
@@ -174,6 +174,33 @@ yargs(hideBin(process.argv))
         );
     },
     getMissingContent as any
+  )
+  .command(
+    'posts:status <id>',
+    'Change a post status between draft and schedule',
+    (yargs: Argv) => {
+      return yargs
+        .positional('id', {
+          describe: 'Post ID',
+          type: 'string',
+        })
+        .option('status', {
+          alias: 's',
+          describe: 'New status: "draft" or "schedule"',
+          type: 'string',
+          choices: ['draft', 'schedule'],
+          demandOption: true,
+        })
+        .example(
+          '$0 posts:status post-123 --status draft',
+          'Move a scheduled post back to draft (stops the running workflow)'
+        )
+        .example(
+          '$0 posts:status post-123 --status schedule',
+          'Schedule a draft post so it is queued for publishing'
+        );
+    },
+    changePostStatus as any
   )
   .command(
     'posts:connect <id>',
