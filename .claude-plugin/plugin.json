@@ -10,6 +10,7 @@
   "homepage": "https://docs.postiz.com/public-api/introduction",
   "repository": "https://github.com/gitroomhq/postiz-agent",
   "license": "AGPL-3.0",
+  "skills": ["./"],
   "keywords": [
     "postiz",
     "social-media",
