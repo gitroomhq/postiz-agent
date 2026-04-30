@@ -28,6 +28,22 @@ official website: https://postiz.com
 
 ---
 
+## ⚠️ Two Hard Rules (Read First)
+
+**Rule 1 — Authenticate before anything.** All commands fail without valid credentials.
+
+**Rule 2 — Every file passed to `-m` (or to `image`/media fields in JSON mode) MUST first go through `postiz upload`.** Raw filesystem paths (`image.jpg`, `video.mp4`) and external URLs (`https://example.com/...`) are **NOT** accepted by the publishing pipeline. TikTok, Instagram, YouTube, and most other providers reject anything that isn't a Postiz-verified URL. Always:
+
+```bash
+RESULT=$(postiz upload <file>)
+URL=$(echo "$RESULT" | jq -r '.path')
+postiz posts:create ... -m "$URL" ...
+```
+
+If you see `-m "something.jpg"` anywhere below, treat it as shorthand for "the `.path` you got back from `postiz upload something.jpg`" — never a raw local file.
+
+---
+
 ## ⚠️ Authentication Required
 
 **You MUST authenticate before running any Postiz CLI command.** All commands will fail without valid credentials.
@@ -137,14 +153,20 @@ postiz posts:create -c "Content" -s "2024-12-31T12:00:00Z" -i "integration-id"
 # Draft post
 postiz posts:create -c "Content" -s "2024-12-31T12:00:00Z" -t draft -i "integration-id"
 
-# Post with media
-postiz posts:create -c "Content" -m "img1.jpg,img2.jpg" -s "2024-12-31T12:00:00Z" -i "integration-id"
+# Post with media (upload each file FIRST — see Rule 2)
+IMG1=$(postiz upload img1.jpg | jq -r '.path')
+IMG2=$(postiz upload img2.jpg | jq -r '.path')
+postiz posts:create -c "Content" -m "$IMG1,$IMG2" -s "2024-12-31T12:00:00Z" -i "integration-id"
 
-# Post with comments (each with own media)
+# Post with comments (each with own media — every file uploaded first)
+MAIN=$(postiz upload main.jpg | jq -r '.path')
+C1=$(postiz upload comment1.jpg | jq -r '.path')
+C2A=$(postiz upload comment2.jpg | jq -r '.path')
+C2B=$(postiz upload comment3.jpg | jq -r '.path')
 postiz posts:create \
-  -c "Main post" -m "main.jpg" \
-  -c "First comment" -m "comment1.jpg" \
-  -c "Second comment" -m "comment2.jpg,comment3.jpg" \
+  -c "Main post" -m "$MAIN" \
+  -c "First comment" -m "$C1" \
+  -c "Second comment" -m "$C2A,$C2B" \
   -s "2024-12-31T12:00:00Z" \
   -i "integration-id"
 
@@ -318,11 +340,17 @@ postiz posts:create \
 ### Pattern 3: Twitter Thread
 
 ```bash
+# Upload every image first (Rule 2)
+INTRO=$(postiz upload intro.jpg | jq -r '.path')
+P1=$(postiz upload point1.jpg | jq -r '.path')
+P2=$(postiz upload point2.jpg | jq -r '.path')
+OUTRO=$(postiz upload outro.jpg | jq -r '.path')
+
 postiz posts:create \
-  -c "🧵 Thread starter (1/4)" -m "intro.jpg" \
-  -c "Point one (2/4)" -m "point1.jpg" \
-  -c "Point two (3/4)" -m "point2.jpg" \
-  -c "Conclusion (4/4)" -m "outro.jpg" \
+  -c "🧵 Thread starter (1/4)" -m "$INTRO" \
+  -c "Point one (2/4)" -m "$P1" \
+  -c "Point two (3/4)" -m "$P2" \
+  -c "Conclusion (4/4)" -m "$OUTRO" \
   -s "2024-12-31T12:00:00Z" \
   -d 2000 \
   -i "twitter-id"
@@ -341,7 +369,7 @@ cat > campaign.json << 'EOF'
       "post": [
         {
           "content": "Short tweet version #tech",
-          "image": ["twitter-image.jpg"]
+          "image": ["<URL returned by `postiz upload twitter-image.jpg`>"]
         }
       ]
     },
@@ -350,7 +378,7 @@ cat > campaign.json << 'EOF'
       "post": [
         {
           "content": "Professional LinkedIn version with more context...",
-          "image": ["linkedin-image.jpg"]
+          "image": ["<URL returned by `postiz upload linkedin-image.jpg`>"]
         }
       ]
     }
@@ -406,11 +434,13 @@ CONTENT=(
 )
 
 for i in "${!DATES[@]}"; do
+  # Rule 2: upload each file before passing to -m
+  IMG=$(postiz upload "post-${i}.jpg" | jq -r '.path')
   postiz posts:create \
     -c "${CONTENT[$i]}" \
     -s "${DATES[$i]}" \
     -i "twitter-id" \
-    -m "post-${i}.jpg"
+    -m "$IMG"
   echo "Scheduled: ${CONTENT[$i]} for ${DATES[$i]}"
 done
 ```
@@ -501,24 +531,30 @@ postiz posts:create -c "Content" -s "2024-12-31T12:00:00Z" --settings '{"subredd
 Posts can have comments (threads on Twitter/X, replies elsewhere). Each comment can have its own media:
 
 ```bash
-# Using multiple -c and -m flags
+# Upload every file first (Rule 2)
+I1=$(postiz upload image1.jpg | jq -r '.path')
+I2=$(postiz upload image2.jpg | jq -r '.path')
+CI=$(postiz upload comment-img.jpg | jq -r '.path')
+A1=$(postiz upload another.jpg | jq -r '.path')
+A2=$(postiz upload more.jpg | jq -r '.path')
+
 postiz posts:create \
-  -c "Main post" -m "image1.jpg,image2.jpg" \
-  -c "Comment 1" -m "comment-img.jpg" \
-  -c "Comment 2" -m "another.jpg,more.jpg" \
+  -c "Main post" -m "$I1,$I2" \
+  -c "Comment 1" -m "$CI" \
+  -c "Comment 2" -m "$A1,$A2" \
   -s "2024-12-31T12:00:00Z" \
   -d 5 \  # Delay between comments in minutes
   -i "integration-id"
 ```
 
-Internally creates:
+Internally creates (note: every URL is a Postiz-uploaded `.path`, not a raw filename):
 ```json
 {
   "posts": [{
     "value": [
-      { "content": "Main post", "image": ["image1.jpg", "image2.jpg"] },
-      { "content": "Comment 1", "image": ["comment-img.jpg"], "delay": 5 },
-      { "content": "Comment 2", "image": ["another.jpg", "more.jpg"], "delay": 5 }
+      { "content": "Main post", "image": ["<uploaded image1>", "<uploaded image2>"] },
+      { "content": "Comment 1", "image": ["<uploaded comment-img>"], "delay": 5 },
+      { "content": "Comment 2", "image": ["<uploaded another>", "<uploaded more>"], "delay": 5 }
     ]
   }]
 }
@@ -699,7 +735,7 @@ https://clawhub.ai/nevo-david/agent-media
 1. **Not authenticated** - Run `postiz auth:login` or `export POSTIZ_API_KEY=key` before using CLI
 2. **Invalid integration ID** - Run `integrations:list` to get current IDs
 3. **Settings schema mismatch** - Check `integrations:settings` for required fields
-4. **Media MUST be uploaded to Postiz first** - ⚠️ **CRITICAL:** TikTok, Instagram, YouTube, and many platforms only accept verified URLs. Upload files via `postiz upload` first, then use the returned URL in `-m`. External URLs will be rejected!
+4. **Media MUST be uploaded to Postiz first** - ⚠️ **CRITICAL (Rule 2):** Every value passed to `-m` or to an `image`/media field in JSON mode must be a `.path` returned by `postiz upload`. Raw local filenames (`image.jpg`) and external URLs (`https://...`) will be rejected — TikTok, Instagram, YouTube and most other providers only accept Postiz-verified URLs. No exceptions: even a "quick test post" needs the upload step.
 5. **JSON escaping in shell** - Use single quotes for JSON: `--settings '{...}'`
 6. **Date format** - Must be ISO 8601: `"2024-12-31T12:00:00Z"` and is REQUIRED
 7. **Tool not found** - Check available tools in `integrations:settings` output
@@ -727,7 +763,7 @@ postiz integrations:trigger <id> <method> -d '{}'  # Fetch dynamic data
 # Posting (date is REQUIRED)
 postiz posts:create -c "text" -s "2024-12-31T12:00:00Z" -i "id"                  # Simple
 postiz posts:create -c "text" -s "2024-12-31T12:00:00Z" -t draft -i "id"        # Draft
-postiz posts:create -c "text" -m "img.jpg" -s "2024-12-31T12:00:00Z" -i "id"    # With media
+postiz posts:create -c "text" -m "$(postiz upload img.jpg | jq -r '.path')" -s "2024-12-31T12:00:00Z" -i "id"  # With media (upload first — Rule 2)
 postiz posts:create -c "main" -c "comment" -s "2024-12-31T12:00:00Z" -i "id"    # With comment
 postiz posts:create -c "text" -s "2024-12-31T12:00:00Z" --settings '{}' -i "id" # Platform-specific
 postiz posts:create --json file.json                                             # Complex
