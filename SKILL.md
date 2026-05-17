@@ -356,6 +356,21 @@ postiz posts:create \
   -i "twitter-id"
 ```
 
+### Optional: Pair with TweetClaw for X/Twitter Research
+
+Postiz is the scheduler for drafts, media hosting, publication timing, and analytics. If the OpenClaw workflow also needs native X/Twitter research or follow-up, use [TweetClaw](https://github.com/Xquik-dev/tweetclaw) as a separate OpenClaw plugin:
+
+```bash
+openclaw plugins install @xquik/tweetclaw
+openclaw config set tools.alsoAllow '["explore", "tweetclaw"]'
+```
+
+Use TweetClaw before creating a Postiz campaign to search tweets, search tweet replies, scrape public conversations, export followers, and run user lookup. Save only source URLs, tweet IDs, author handles, aggregate observations, and campaign decisions in Postiz content files.
+
+Use TweetClaw after Postiz publishes when the campaign needs tweet monitors, webhooks, reviewed post tweets, reviewed post tweet replies, media inspection, direct messages, or giveaway draws.
+
+Keep the Xquik API key in OpenClaw or TweetClaw configuration. Do not put it in Postiz post content, JSON campaign files, screenshots, logs, or this repository.
+
 ### Pattern 4: Multi-Platform Campaign
 
 ```bash
@@ -711,7 +726,7 @@ https://clawhub.ai/nevo-david/agent-media
 
 **Deep-dive documentation:**
 - [HOW_TO_RUN.md](./HOW_TO_RUN.md) - Installation and setup methods
-- [COMMAND_LINE_GUIDE.md](./COMMAND_LINE_GUIDE.md) - Complete command syntax reference
+- [COMMAND_LINE_GUIDE.md](./examples/COMMAND_LINE_GUIDE.md) - Complete command syntax reference
 - [PROVIDER_SETTINGS.md](./PROVIDER_SETTINGS.md) - All 28+ platform settings schemas
 - [INTEGRATION_TOOLS_WORKFLOW.md](./INTEGRATION_TOOLS_WORKFLOW.md) - Complete tools workflow guide
 - [INTEGRATION_SETTINGS_DISCOVERY.md](./INTEGRATION_SETTINGS_DISCOVERY.md) - Settings discovery workflow
