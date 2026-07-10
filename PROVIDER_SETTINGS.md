@@ -207,6 +207,9 @@ postiz posts:create \
 - `brand_organic_toggle` (boolean): Brand organic toggle
 - `video_made_with_ai` (optional): Boolean
 - `content_posting_method` (required): `"DIRECT_POST"` or `"UPLOAD"`
+  - **Use `"DIRECT_POST"`.** It publishes the post to TikTok.
+  - `"UPLOAD"` does **not** publish. It sends the media to the account's TikTok app inbox, where the user must manually finish and publish it within 24 hours or it is discarded. The Postiz API still reports the post as successfully published.
+  - Only use `"UPLOAD"` when the user has **explicitly** asked to review or edit the post inside the TikTok app before publishing. Never infer it from the user saying "upload this video" — that means `"DIRECT_POST"`.
 
 **Example:**
 ```bash
