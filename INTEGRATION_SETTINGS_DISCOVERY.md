@@ -202,8 +202,10 @@ postiz integrations:settings tiktok-mno345
 
 Returns:
 - Max length: 150 characters (caption)
-- Required settings: privacy_level, duet, stitch, comment, autoAddMusic, brand_content_toggle, brand_organic_toggle, content_posting_method
-- Optional: title, video_made_with_ai
+- Required settings: privacy_level, duet, stitch, comment, brand_content_toggle, brand_organic_toggle, content_posting_method
+- Optional: title, video_made_with_ai, autoAddMusic
+- Posting method: every setting except title requires `content_posting_method: "DIRECT_POST"` — with `"UPLOAD"` only the title/content is kept
+- Media type: duet, stitch, video_made_with_ai are video-only; autoAddMusic is photo-only; see [PROVIDER_SETTINGS.md](./PROVIDER_SETTINGS.md)
 
 ### Instagram
 

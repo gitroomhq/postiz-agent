@@ -15,7 +15,7 @@ The CLI now supports **platform-specific settings** for all 28+ integrations!
 | **X (Twitter)** | `x` | who_can_reply_post, community |
 | **LinkedIn** | `linkedin` | post_as_images_carousel, carousel_name |
 | **Instagram** | `instagram` | post_type (post/story), collaborators |
-| **TikTok** | `tiktok` | title, privacy_level, duet, stitch, comment, autoAddMusic |
+| **TikTok** | `tiktok` | content_posting_method (use DIRECT_POST), title, privacy_level, comment, brand_content_toggle, brand_organic_toggle, duet/stitch/video_made_with_ai (video only), autoAddMusic (photo only) |
 | **Facebook** | `facebook` | Platform-specific settings |
 | **Pinterest** | `pinterest` | Platform-specific settings |
 | **Discord** | `discord` | Platform-specific settings |
@@ -148,7 +148,6 @@ postiz posts:create \
     "duet": true,
     "stitch": true,
     "comment": true,
-    "autoAddMusic": "no",
     "brand_content_toggle": false,
     "brand_organic_toggle": false,
     "content_posting_method": "DIRECT_POST"

@@ -331,7 +331,7 @@ VIDEO_URL=$(echo "$VIDEO" | jq -r '.path')
 postiz posts:create \
   -c "Video caption #fyp" \
   -s "2024-12-31T12:00:00Z" \
-  --settings '{"privacy":"PUBLIC_TO_EVERYONE","duet":true,"stitch":true}' \
+  --settings '{"privacy_level":"PUBLIC_TO_EVERYONE","duet":true,"stitch":true,"content_posting_method":"DIRECT_POST"}' \
   -m "$VIDEO_URL" \
   -i "tiktok-id"
 ```
@@ -735,7 +735,7 @@ AGPL-3.0
 | LinkedIn | getCompanies | companyId, carousel |
 | Reddit | getFlairs, searchSubreddits | subreddit, title, flair |
 | YouTube | getPlaylists, getCategories | title, type, tags, playlistId |
-| TikTok | - | privacy, duet, stitch |
+| TikTok | - | content_posting_method, privacy_level, comment, brand toggles, duet/stitch/video_made_with_ai (video only), autoAddMusic (photo only) |
 | Instagram | - | post_type (post/story) |
 | Facebook | getPages | - |
 | Pinterest | getBoards, getBoardSections | - |
