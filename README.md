@@ -183,7 +183,7 @@ postiz posts:list --startDate "2024-01-01T00:00:00Z" --endDate "2024-12-31T23:59
 postiz posts:list --customer "customer-id"
 ```
 
-Defaults to last 30 days to next 30 days if dates not specified.
+Defaults to last 30 days to next 30 days if dates not specified. Each returned post includes its current `settings` (returned as a JSON string — `JSON.parse` it). The intended workflow is `posts:list` (read current settings) → `posts:settings` (patch them).
 
 **Delete post**
 ```bash
@@ -197,6 +197,14 @@ postiz posts:status <post-id> --status schedule
 ```
 
 Move a scheduled post back to a draft, or promote a draft into the publishing queue. Switching to `draft` also terminates any workflow that's already running for the post, so it won't publish. Switching to `schedule` queues the post for publishing at its stored date.
+
+**Update a post's provider-specific settings**
+```bash
+postiz posts:settings <post-id> --settings '{"content_posting_method":"DIRECT_POST"}'
+postiz posts:settings <post-id> --settings '{"subreddit":[{"value":{"subreddit":"/r/selfhosted","title":"My title","type":"self","is_flair_required":true}}]}'
+```
+
+Patches a post's settings server-side. The backend **merges** the object — only the keys you pass change, everything else is preserved — so pass a partial object, not the full settings blob. Only **DRAFT/QUEUE** (unpublished) posts can be updated; published posts are rejected. Pass the **main post id**, not a comment id. Do **not** include `__type` — the backend adds it automatically from the integration.
 
 ---
 
@@ -560,6 +568,7 @@ The CLI interacts with these Postiz API endpoints:
 | `/public/v1/posts` | POST | Create a post |
 | `/public/v1/posts` | GET | List posts |
 | `/public/v1/posts/:id` | DELETE | Delete a post |
+| `/public/v1/posts/:id/settings` | PUT | Update a post's provider settings (merged; unpublished only) |
 | `/public/v1/posts/:id/missing` | GET | Get missing content from provider |
 | `/public/v1/posts/:id/release-id` | PUT | Update release ID for a post |
 | `/public/v1/integrations` | GET | List integrations (optional `?group=` filter) |
@@ -679,6 +688,7 @@ postiz posts:list                                  # List posts
 postiz posts:delete <id>                          # Delete post
 postiz posts:status <id> --status draft           # Move to draft (stops workflow)
 postiz posts:status <id> --status schedule        # Queue draft for publishing
+postiz posts:settings <id> --settings '{}'        # Patch a post's settings (merged; DRAFT/QUEUE only)
 postiz upload <file>                              # Upload media
 
 # Analytics
