@@ -193,20 +193,30 @@ postiz posts:create \
 ### TikTok (`tiktok`)
 
 **Settings:**
-- `title` (optional): Video title (max 90 characters)
-- `privacy_level` (required): Privacy level
+
+Two independent axes decide whether a TikTok setting applies. A setting sent on the wrong axis is **silently discarded** — the API still reports success:
+
+1. **Posting method** — every setting below except `title` requires `content_posting_method: "DIRECT_POST"`. With `"UPLOAD"`, TikTok keeps only the title/content and discards everything else.
+2. **Media type** — `duet`, `stitch`, and `video_made_with_ai` apply to **video posts only**; `autoAddMusic` applies to **photo posts only**; the rest apply to both.
+
+- `title` (optional): Video title (max 90 characters) — the only setting that survives `"UPLOAD"`
+- `privacy_level` (required, DIRECT_POST only, video + photo): Privacy level
   - `"PUBLIC_TO_EVERYONE"`
   - `"MUTUAL_FOLLOW_FRIENDS"`
   - `"FOLLOWER_OF_CREATOR"`
   - `"SELF_ONLY"`
-- `duet` (boolean): Allow duets
-- `stitch` (boolean): Allow stitch
-- `comment` (boolean): Allow comments
-- `autoAddMusic` (required): `"yes"` or `"no"`
-- `brand_content_toggle` (boolean): Brand content toggle
-- `brand_organic_toggle` (boolean): Brand organic toggle
-- `video_made_with_ai` (optional): Boolean
+- `duet` (boolean, DIRECT_POST only, **video posts only**): Allow duets
+- `stitch` (boolean, DIRECT_POST only, **video posts only**): Allow stitch
+- `comment` (boolean, DIRECT_POST only, video + photo): Allow comments
+- `autoAddMusic` (DIRECT_POST only, **photo posts only**): `"yes"` or `"no"` — automatically adds music to photo posts; ignored on video posts, so don't set it there
+- `brand_content_toggle` (boolean, DIRECT_POST only, video + photo): Brand content toggle
+- `brand_organic_toggle` (boolean, DIRECT_POST only, video + photo): Brand organic toggle
+- `video_made_with_ai` (optional boolean, DIRECT_POST only, **video posts only**): Label the video as AI-generated
 - `content_posting_method` (required): `"DIRECT_POST"` or `"UPLOAD"`
+  - **Use `"DIRECT_POST"`.** It publishes the post to TikTok.
+  - `"UPLOAD"` does **not** publish. It sends the media to the account's TikTok app inbox, where the user must manually finish and publish it within 24 hours or it is discarded. The Postiz API still reports the post as successfully published.
+  - `"UPLOAD"` also discards every other setting in this list except `title` — TikTok's inbox endpoint accepts no post info.
+  - Only use `"UPLOAD"` when the user has **explicitly** asked to review or edit the post inside the TikTok app before publishing. Never infer it from the user saying "upload this video" — that means `"DIRECT_POST"`.
 
 **Example:**
 ```bash
@@ -220,9 +230,9 @@ postiz posts:create \
     "duet": true,
     "stitch": true,
     "comment": true,
-    "autoAddMusic": "no",
     "brand_content_toggle": false,
     "brand_organic_toggle": false,
+    "video_made_with_ai": false,
     "content_posting_method": "DIRECT_POST"
   }' \
   -i "tiktok-123"

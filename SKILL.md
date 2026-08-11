@@ -28,7 +28,7 @@ official website: https://postiz.com
 
 ---
 
-## ⚠️ Two Hard Rules (Read First)
+## ⚠️ Four Hard Rules (Read First)
 
 **Rule 1 — Authenticate before anything.** All commands fail without valid credentials.
 
@@ -41,6 +41,10 @@ postiz posts:create ... -m "$URL" ...
 ```
 
 If you see `-m "something.jpg"` anywhere below, treat it as shorthand for "the `.path` you got back from `postiz upload something.jpg`" — never a raw local file.
+
+**Rule 3 — When posting to TikTok, `content_posting_method` MUST be `"DIRECT_POST"`** unless the user has explicitly asked to finish the post inside the TikTok app. `"UPLOAD"` does not publish — it drops the media into the account's TikTok inbox to be completed manually within 24 hours, while the Postiz API still reports success. A user saying "upload this video to TikTok" means `"DIRECT_POST"`.
+
+**Rule 4 — Fetch `postiz integrations:settings <id>` before scheduling and honor the returned `rules` and per-field `description`s.** They state which settings apply and when. A setting that doesn't apply (wrong posting method, wrong media type, etc.) is **silently discarded**, not rejected — the post still reports success, so this is your only chance to catch it.
 
 ---
 
@@ -403,9 +407,18 @@ postiz posts:create --json campaign.json
 INTEGRATION_ID="twitter-123"
 CONTENT="Your post content here"
 
-# Get integration settings and extract max length
+# Get integration settings
 SETTINGS_JSON=$(postiz integrations:settings "$INTEGRATION_ID")
 MAX_LENGTH=$(echo "$SETTINGS_JSON" | jq '.output.maxLength')
+
+# Provider-specific guidance written for agents. Read it and follow it — it explains
+# what the settings values actually do (e.g. which enum value publishes vs. silently
+# does not). Do not skip this because a field name looks self-explanatory.
+echo "$SETTINGS_JSON" | jq -r '.output.rules // empty'
+
+# The settings JSON schema. Property `description` fields carry the same guidance
+# per-field; check them before choosing a value.
+echo "$SETTINGS_JSON" | jq '.output.settings'
 
 # Check character limit and truncate if needed
 if [ ${#CONTENT} -gt "$MAX_LENGTH" ]; then
@@ -646,7 +659,7 @@ VIDEO_URL=$(echo "$VIDEO" | jq -r '.path')
 postiz posts:create \
   -c "Video caption #fyp" \
   -s "2024-12-31T12:00:00Z" \
-  --settings '{"privacy":"PUBLIC_TO_EVERYONE","duet":true,"stitch":true}' \
+  --settings '{"privacy_level":"PUBLIC_TO_EVERYONE","duet":true,"stitch":true,"content_posting_method":"DIRECT_POST"}' \
   -m "$VIDEO_URL" \
   -i "tiktok-id"
 ```
