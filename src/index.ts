@@ -1,6 +1,6 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { createPost, listPosts, deletePost, getMissingContent, connectPost, changePostStatus } from './commands/posts';
+import { createPost, listPosts, deletePost, getMissingContent, connectPost, changePostStatus, updatePostSettings } from './commands/posts';
 import { listIntegrations, listGroups, getIntegrationSettings, triggerIntegrationTool } from './commands/integrations';
 import { getAnalytics, getPostAnalytics } from './commands/analytics';
 import { uploadFile } from './commands/upload';
@@ -201,6 +201,31 @@ yargs(hideBin(process.argv))
         );
     },
     changePostStatus as any
+  )
+  .command(
+    'posts:settings <id>',
+    'Update a post\'s provider-specific settings (merged; only unpublished draft/scheduled posts)',
+    (yargs: Argv) => {
+      return yargs
+        .positional('id', {
+          describe: 'Post ID',
+          type: 'string',
+        })
+        .option('settings', {
+          describe: 'Partial settings as a JSON string — only the keys you pass change; do not include __type',
+          type: 'string',
+          demandOption: true,
+        })
+        .example(
+          '$0 posts:settings post-123 --settings \'{"content_posting_method":"DIRECT_POST"}\'',
+          'Switch a TikTok draft to direct publishing'
+        )
+        .example(
+          '$0 posts:settings post-123 --settings \'{"subreddit":[{"value":{"subreddit":"/r/selfhosted","title":"My title","type":"self","is_flair_required":true}}]}\'',
+          'Set a Reddit post\'s subreddit'
+        );
+    },
+    updatePostSettings as any
   )
   .command(
     'posts:connect <id>',

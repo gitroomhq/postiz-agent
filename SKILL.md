@@ -198,6 +198,8 @@ postiz posts:create --json post.json
 
 ```bash
 # List posts (defaults to last 30 days to next 30 days)
+# Each returned post includes its current `settings` (as a JSON string — JSON.parse it).
+# Workflow: run posts:list to read a post's current settings, then posts:settings to patch them.
 postiz posts:list
 
 # List posts in date range
@@ -209,6 +211,12 @@ postiz posts:delete <post-id>
 # Change post status (draft ↔ schedule)
 postiz posts:status <post-id> --status draft     # Move back to draft, terminates any running publish workflow
 postiz posts:status <post-id> --status schedule  # Promote a draft into the publishing queue (uses the post's stored date)
+
+# Update a post's provider-specific settings (merged — only the keys you pass change)
+# Only DRAFT/QUEUE (unpublished) posts can be updated. Pass the MAIN post id, not a comment id.
+# Do NOT include __type — the backend adds it automatically from the integration.
+postiz posts:settings <post-id> --settings '{"content_posting_method":"DIRECT_POST"}'   # Switch a TikTok draft to direct publishing
+postiz posts:settings <post-id> --settings '{"subreddit":[{"value":{"subreddit":"/r/selfhosted","title":"My title","type":"self","is_flair_required":true}}]}'  # Set a Reddit post's subreddit
 ```
 
 ### Analytics
@@ -762,6 +770,7 @@ https://clawhub.ai/nevo-david/agent-media
 9. **Required settings** - Some platforms require specific settings (Reddit needs title, YouTube needs title)
 10. **Media MIME types** - CLI auto-detects from file extension, ensure correct extension
 11. **Analytics returns `{"missing": true}`** - The post was published but the platform didn't return a post ID. Run `posts:missing <post-id>` to get available content, then `posts:connect <post-id> --release-id "<id>"` to link it. Analytics will work after connecting.
+12. **`posts:settings` merges** - Only the keys you pass change; everything else on the post is preserved, so pass a partial object, not the full settings blob. Only **DRAFT/QUEUE** (unpublished) posts can be updated — published posts are rejected. Pass the **main post id**, not a comment id. Never include `__type` — the backend adds it automatically from the integration.
 
 ---
 
@@ -794,6 +803,7 @@ postiz posts:list                                  # List posts
 postiz posts:delete <id>                          # Delete post
 postiz posts:status <id> --status draft           # Move to draft (stops workflow)
 postiz posts:status <id> --status schedule        # Queue draft for publishing
+postiz posts:settings <id> --settings '{}'        # Patch a post's settings (merged; DRAFT/QUEUE only)
 postiz upload <file>                              # Upload media
 
 # Analytics

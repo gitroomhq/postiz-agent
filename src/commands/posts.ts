@@ -205,6 +205,39 @@ export async function changePostStatus(args: any) {
   }
 }
 
+export async function updatePostSettings(args: any) {
+  const config = getConfig();
+  const api = new PostizAPI(config);
+
+  if (!args.id) {
+    console.error('❌ Post ID is required');
+    process.exit(1);
+  }
+
+  if (!args.settings) {
+    console.error('❌ --settings is required');
+    process.exit(1);
+  }
+
+  let settings: any;
+  try {
+    settings = JSON.parse(args.settings);
+  } catch (error: any) {
+    console.error('❌ Failed to parse settings JSON:', error.message);
+    process.exit(1);
+  }
+
+  try {
+    const result = await api.updatePostSettings(args.id, settings);
+    console.log(`✅ Post ${args.id} settings updated`);
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  } catch (error: any) {
+    console.error('❌ Failed to update post settings:', error.message);
+    process.exit(1);
+  }
+}
+
 export async function deletePost(args: any) {
   const config = getConfig();
   const api = new PostizAPI(config);
