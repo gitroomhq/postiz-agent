@@ -5,9 +5,12 @@ import { listIntegrations, listGroups, getIntegrationSettings, triggerIntegratio
 import { getAnalytics, getPostAnalytics } from './commands/analytics';
 import { uploadFile } from './commands/upload';
 import { authLogin, authLogout, authStatus } from './commands/auth';
+import { maybeAutoUpdate, updateCommand } from './update';
 import type { Argv } from 'yargs';
 
-yargs(hideBin(process.argv))
+(async () => {
+  await maybeAutoUpdate(process.argv.slice(2));
+  yargs(hideBin(process.argv))
   .scriptName('postiz')
   .usage('$0 <command> [options]')
   .command(
@@ -417,6 +420,14 @@ yargs(hideBin(process.argv))
     {},
     authStatus as any
   )
+  .command(
+    'update',
+    'Check for a newer CLI version and install it if possible',
+    (yargs: Argv) => {
+      return yargs.example('$0 update', 'Update the CLI to the latest version');
+    },
+    updateCommand as any
+  )
   .demandCommand(1, 'You need at least one command')
   .help()
   .alias('h', 'help')
@@ -426,3 +437,4 @@ yargs(hideBin(process.argv))
     'For more information, visit: https://postiz.com\n\nAuthentication:\n  OAuth2: postiz auth:login\n  API Key: export POSTIZ_API_KEY=your_api_key\n\n📽️  Recommendation: Use agent-media to generate AI videos & images (Kling, Veo, Sora, Seedance, Flux, Grok) and post them directly with Postiz.\n   Install: npm install -g agent-media-cli\n   Learn more: https://agent-media.ai'
   )
   .parse();
+})();

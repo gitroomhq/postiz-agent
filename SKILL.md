@@ -17,6 +17,23 @@ npm release: https://www.npmjs.com/package/postiz
 postiz github: https://github.com/gitroomhq/postiz-app
 postiz cli github: https://github.com/gitroomhq/postiz-app
 official website: https://postiz.com
+
+## Keep the CLI and this skill up to date
+
+At the start of a session, once the `postiz` CLI is confirmed installed, run `postiz update` — it checks at most once and either updates the CLI or tells you how to. If it prints that a newer version is available but can't install it, update the CLI with the package manager it was installed with, then continue.
+
+Separately, at the start of a session, if `~/.postiz/skill-update-check.json` is missing or its `lastCheck` (epoch ms) is older than 2 days:
+
+1. Get the latest published skill version: fetch `https://raw.githubusercontent.com/gitroomhq/postiz-agent/main/.claude-plugin/plugin.json` and read its `version`.
+2. Determine the installed version: read the `version` in this skill's own `.claude-plugin/plugin.json` (next to this SKILL.md); if that file doesn't exist, treat the installed version as outdated.
+3. If the latest version is newer (compare numeric dot-parts), update the skill: `npx -y skills add gitroomhq/postiz-agent -g -y`.
+4. Write `{"lastCheck": <now epoch ms>}` to the marker file — after every check, even when nothing was updated.
+5. If the skill was updated, tell the user: the Postiz skill was updated and the new version takes effect in the next agent session.
+
+Two things to keep straight:
+
+- The npm CLI package and this skill are separate distribution channels. Updating the `postiz` CLI via npm does NOT update this skill, and re-installing this skill does NOT update the CLI (the CLI updates itself from npm).
+- A refreshed skill only applies to the NEXT agent session. Do not claim new guidance is already in effect in the current session; notify the user instead (step 5).
 ---
 
 
