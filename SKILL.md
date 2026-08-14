@@ -20,7 +20,7 @@ official website: https://postiz.com
 
 ## Keep the CLI and this skill up to date
 
-At the start of a session, once the `postiz` CLI is confirmed installed, run `postiz update` — it checks at most once and either updates the CLI or tells you how to. If it prints that a newer version is available but can't install it, update the CLI with the package manager it was installed with, then continue.
+At the start of a session, once the `postiz` CLI is confirmed installed, run `postiz update` — it checks at most once and either updates the CLI or tells you how to. If it prints that a newer version is available but can't install it, update the CLI with the package manager it was installed with, then continue. `postiz update` is an unauthenticated maintenance command — the authentication requirement below does not apply to it.
 
 Separately, at the start of a session, if `~/.postiz/skill-update-check.json` is missing or its `lastCheck` (epoch ms) is older than 2 days:
 

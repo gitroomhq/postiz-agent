@@ -45,7 +45,7 @@ function detectManager(): Manager {
   } catch {
     return { kind: 'unknown' };
   }
-  if (entry.includes('/_npx/')) return { kind: 'ephemeral' };
+  if (entry.includes('/_npx/') || entry.includes('/.bun/install/cache/')) return { kind: 'ephemeral' };
   const packageRoot = dirname(dirname(entry)); // dist/index.js -> package dir
   if (dirname(packageRoot).endsWith('/lib/node_modules'))
     return { kind: 'auto', cmd: 'npm', args: ['install', '-g', 'postiz@latest'], manual: 'npm install -g postiz@latest' };
@@ -77,7 +77,7 @@ function installedVersionNow(): string | null {
 // check finds nothing newer and recursion is impossible.
 function runInstall(manager: { cmd: string; args: string[]; manual: string }, latest: string): string[] | null {
   const { spawnSync } = require('child_process');
-  const install = spawnSync(manager.cmd, manager.args, { stdio: ['ignore', 'ignore', 'inherit'] });
+  const install = spawnSync(manager.cmd, manager.args, { stdio: ['ignore', 'ignore', 'inherit'], timeout: 120000 });
   if (install.status !== 0) {
     process.stderr.write(`Update failed. Run manually: ${manager.manual}\n`);
     return null;
@@ -85,7 +85,7 @@ function runInstall(manager: { cmd: string; args: string[]; manual: string }, la
   if (installedVersionNow() === latest) return [process.execPath, process.argv[1]];
   // Some managers (pnpm) relocate the package and repoint the bin instead of
   // updating in place — fall back to the PATH-resolved bin if it is the new version.
-  const bin = spawnSync('postiz', ['--version'], { encoding: 'utf-8' });
+  const bin = spawnSync('postiz', ['--version'], { encoding: 'utf-8', timeout: 10000 });
   if (bin.status === 0 && typeof bin.stdout === 'string' && bin.stdout.trim() === latest) return ['postiz'];
   process.stderr.write(`Update did not apply to this install. Run manually: ${manager.manual}\n`);
   return null;
@@ -129,8 +129,9 @@ export async function maybeAutoUpdate(argv: string[]): Promise<void> {
     if (marker && Date.now() - marker.lastCheck < CHECK_INTERVAL) return;
     const manager = detectManager();
     if (manager.kind === 'ephemeral') return;
-    const latest = await fetchLatestVersion();
+    // Written before the fetch so concurrent commands can't both start a check.
     saveMarker();
+    const latest = await fetchLatestVersion();
     if (!latest || !isNewer(latest, currentVersion)) return;
     // Print recommendations after the command's output so they stay visible.
     if (manager.kind === 'local') {
