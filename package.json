@@ -11,7 +11,7 @@
     "build": "tsup",
     "start": "node ./dist/index.js",
     "prepublishOnly": "pnpm run build",
-    "prepublish-check": "node -e \"const {execSync}=require('child_process');const v=require('./package.json').version;const list=JSON.parse(execSync('npm view postiz versions --json',{encoding:'utf8'}));const cmp=(a,b)=>{const x=a.split('.').map(Number),y=b.split('.').map(Number);for(let i=0;i<3;i++){if(x[i]!==y[i])return x[i]-y[i]}return 0};const max=list.reduce((m,c)=>cmp(c,m)>0?c:m);if(cmp(v,max)<=0){console.error('Refusing to publish '+v+': must be greater than the highest published version '+max);process.exit(1)}console.log('Version '+v+' > '+max+' — ok to publish')\"",
+    "prepublish-check": "node -e \"const {execSync}=require('child_process');const re=/^\\d+\\.\\d+\\.\\d+$/;const v=require('./package.json').version;if(!re.test(v)){console.error('Refusing to publish '+v+': version must be plain x.y.z');process.exit(1)}const list=JSON.parse(execSync('npm view postiz versions --json',{encoding:'utf8'})).filter(s=>re.test(s));const cmp=(a,b)=>{const x=a.split('.').map(Number),y=b.split('.').map(Number);for(let i=0;i<3;i++){if(x[i]!==y[i])return x[i]-y[i]}return 0};const max=list.reduce((m,c)=>cmp(c,m)>0?c:m);if(cmp(v,max)<=0){console.error('Refusing to publish '+v+': must be greater than the highest published version '+max);process.exit(1)}console.log('Version '+v+' > '+max+' — ok to publish')\"",
     "publish": "pnpm run prepublish-check && tsup && pnpm publish --access public --no-git-checks"
   },
   "files": [
