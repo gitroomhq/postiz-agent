@@ -187,8 +187,9 @@ postiz posts:create -c "Content" -s "2024-12-31T12:00:00Z" -i "twitter-id,linked
 postiz posts:create \
   -c "Content" \
   -s "2024-12-31T12:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Post","type":"text"}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Post","type":"self"}}]}' \
   -i "reddit-id"
+# Reddit `type` must be `self` (text post), `link` (requires `url`), or `media` (uploads the post's first attached image/mp4; `url` ignored)
 
 # Complex post from JSON file
 postiz posts:create --json post.json
@@ -306,7 +307,7 @@ FLAIR_ID=$(echo "$FLAIRS" | jq -r '.output[0].id')
 postiz posts:create \
   -c "My post content" \
   -s "2024-12-31T12:00:00Z" \
-  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"programming\",\"title\":\"Post Title\",\"type\":\"text\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"Discussion\"}}}]}" \
+  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"programming\",\"title\":\"Post Title\",\"type\":\"self\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"Discussion\"}}}]}" \
   -i "$REDDIT_ID"
 ```
 
@@ -536,7 +537,7 @@ Platform-specific settings use a discriminator pattern with `__type` field:
           "value": {
             "subreddit": "programming",
             "title": "Post Title",
-            "type": "text",
+            "type": "self",
             "url": "",
             "is_flair_required": false
           }
@@ -640,7 +641,7 @@ JSON mode supports:
 postiz posts:create \
   -c "Post content" \
   -s "2024-12-31T12:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Title","type":"text","url":"","is_flair_required":false}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Title","type":"self","url":"","is_flair_required":false}}]}' \
   -i "reddit-id"
 ```
 
