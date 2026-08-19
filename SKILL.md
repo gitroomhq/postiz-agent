@@ -354,9 +354,25 @@ postiz posts:create \
   -m "$VIDEO_PATH" \
   -i "tiktok-id"
 
-# Use the uploaded image as the video thumbnail / Instagram Reel cover
-# (media objects with a thumbnail need the --json form):
-#   "image": [{ "id": "reel", "path": "$VIDEO_PATH", "thumbnail": "$THUMB_PATH" }]
+# Use the uploaded image as the Instagram Reel cover (media objects with a
+# thumbnail need the --json form; without thumbnail Instagram picks a frame)
+cat > reel.json <<EOF
+{
+  "type": "schedule",
+  "date": "2024-12-31T12:00:00Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [{
+    "integration": { "id": "instagram-id" },
+    "value": [{
+      "content": "Check out my reel!",
+      "image": [{ "id": "reel", "path": "$VIDEO_PATH", "thumbnail": "$THUMB_PATH" }]
+    }],
+    "settings": { "post_type": "post" }
+  }]
+}
+EOF
+postiz posts:create --json reel.json
 ```
 
 ### Pattern 3: Twitter Thread
