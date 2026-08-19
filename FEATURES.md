@@ -17,6 +17,7 @@ The Postiz CLI **fully supports** the complete API structure including:
 - Each comment can have **its own images** (separate MediaDto arrays)
 - Support for various image formats (PNG, JPG, JPEG, GIF)
 - Media can be URLs or uploaded files
+- `media:list` finds already-uploaded files so their URLs can be reused
 
 #### ✅ Multi-Platform Posting
 - Post to multiple platforms in one request

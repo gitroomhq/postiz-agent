@@ -3,7 +3,7 @@ import { hideBin } from 'yargs/helpers';
 import { createPost, listPosts, deletePost, getMissingContent, connectPost, changePostStatus, updatePostSettings } from './commands/posts';
 import { listIntegrations, listGroups, getIntegrationSettings, triggerIntegrationTool } from './commands/integrations';
 import { getAnalytics, getPostAnalytics } from './commands/analytics';
-import { uploadFile } from './commands/upload';
+import { uploadFile, listMedia } from './commands/upload';
 import { authLogin, authLogout, authStatus } from './commands/auth';
 import type { Argv } from 'yargs';
 
@@ -388,6 +388,27 @@ yargs(hideBin(process.argv))
         .example('$0 upload ./image.png', 'Upload an image');
     },
     uploadFile as any
+  )
+  .command(
+    'media:list',
+    'List media already uploaded to the media library (newest first, 18 per page)',
+    (yargs: Argv) => {
+      return yargs
+        .option('search', {
+          alias: 's',
+          type: 'string',
+          describe: 'Filter by original file name (case-insensitive)',
+        })
+        .option('page', {
+          alias: 'p',
+          type: 'number',
+          describe: 'Page number, starting at 1',
+          default: 1,
+        })
+        .example('$0 media:list', 'List the most recent uploads')
+        .example('$0 media:list -s banner', 'Find uploads whose name contains "banner"');
+    },
+    listMedia as any
   )
   .command(
     'auth:login',
