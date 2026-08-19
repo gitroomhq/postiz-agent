@@ -353,6 +353,10 @@ postiz posts:create \
   -s "2024-12-31T12:00:00Z" \
   -m "$VIDEO_PATH" \
   -i "tiktok-id"
+
+# Use the uploaded image as the video thumbnail / Instagram Reel cover
+# (media objects with a thumbnail need the --json form):
+#   "image": [{ "id": "reel", "path": "$VIDEO_PATH", "thumbnail": "$THUMB_PATH" }]
 ```
 
 ### Pattern 3: Twitter Thread

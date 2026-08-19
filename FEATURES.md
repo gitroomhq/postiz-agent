@@ -227,7 +227,7 @@ postiz posts:create --json complex-post.json
         id: string,
         path: string,
         alt?: string,
-        thumbnail?: string
+        thumbnail?: string   // Uploaded JPEG/PNG path used as video thumbnail / cover (e.g. Instagram Reel cover); needs --json
       }>,
       delay?: number,        // Minutes
       id?: string
