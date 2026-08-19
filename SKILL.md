@@ -171,7 +171,8 @@ IMG1=$(postiz upload img1.jpg | jq -r '.path')
 IMG2=$(postiz upload img2.jpg | jq -r '.path')
 
 # Reuse something already in the media library instead of uploading again
-EXISTING=$(postiz media:list -s banner | jq -r '.results[0].path')
+EXISTING=$(postiz media:list -s banner | jq -r '.results[0].path // empty')
+[ -z "$EXISTING" ] && echo "No uploaded media matches 'banner'" && exit 1
 postiz posts:create -c "Content" -m "$IMG1,$IMG2,$EXISTING" -s "2024-12-31T12:00:00Z" -i "integration-id"
 
 # Post with comments (each with own media — every file uploaded first)
