@@ -135,6 +135,12 @@ postiz integrations:list
 postiz upload ./path/to/image.png
 ```
 
+### List Uploaded Media
+
+```bash
+postiz media:list --search banner
+```
+
 ## Common Workflows
 
 ### 1. Check What's Connected

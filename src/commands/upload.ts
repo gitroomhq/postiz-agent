@@ -24,3 +24,17 @@ export async function uploadFile(args: any) {
     process.exit(1);
   }
 }
+
+export async function listMedia(args: any) {
+  const config = getConfig();
+  const api = new PostizAPI(config);
+
+  try {
+    const result = await api.listMedia(args.page, args.search);
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  } catch (error: any) {
+    console.error('❌ Failed to list media:', error.message);
+    process.exit(1);
+  }
+}
