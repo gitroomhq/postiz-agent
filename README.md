@@ -152,7 +152,7 @@ postiz posts:create -c "Content" -s "2024-12-31T12:00:00Z" -i "twitter-id,linked
 postiz posts:create \
   -c "Content" \
   -s "2024-12-31T12:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"Post Title","type":"text"}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"Post Title","type":"self"}}]}' \
   -i "reddit-id"
 ```
 
@@ -307,7 +307,7 @@ postiz integrations:trigger reddit-id getFlairs -d '{"subreddit":"programming"}'
 postiz posts:create \
   -c "Content" \
   -s "2024-12-31T12:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Post","type":"text","is_flair_required":true,"flair":{"id":"flair-123","name":"Discussion"}}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Post","type":"self","is_flair_required":true,"flair":{"id":"flair-123","name":"Discussion"}}}]}' \
   -i "reddit-id"
 ```
 
@@ -494,7 +494,7 @@ FLAIR_ID=$(echo "$FLAIRS" | jq -r '.output[0].id')
 postiz posts:create \
   -c "My post content" \
   -s "2024-12-31T12:00:00Z" \
-  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"programming\",\"title\":\"Post Title\",\"type\":\"text\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"Discussion\"}}}]}" \
+  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"programming\",\"title\":\"Post Title\",\"type\":\"self\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"Discussion\"}}}]}" \
   -i "$REDDIT_ID"
 ```
 
