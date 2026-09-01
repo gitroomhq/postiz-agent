@@ -1,0 +1,50 @@
+{
+  "name": "postiz-agent",
+  "owner": {
+    "name": "Nevo David",
+    "email": "nevo@postiz.com"
+  },
+  "metadata": {
+    "description": "Postiz social media automation for AI agents — schedule and publish posts across 28+ platforms"
+  },
+  "plugins": [
+    {
+      "name": "postiz",
+      "source": "./",
+      "version": "2.0.16",
+      "description": "Social media automation CLI for scheduling posts, managing integrations, uploading media, and tracking analytics across 28+ platforms including X, LinkedIn, Reddit, YouTube, TikTok, Instagram, and more",
+      "author": {
+        "name": "Nevo David",
+        "email": "nevo@postiz.com"
+      },
+      "homepage": "https://postiz.com",
+      "repository": "https://github.com/gitroomhq/postiz-agent",
+      "license": "AGPL-3.0",
+      "logo": "assets/logo.svg",
+      "category": "productivity",
+      "tags": [
+        "social-media",
+        "scheduling",
+        "marketing",
+        "automation",
+        "ai-agent"
+      ],
+      "keywords": [
+        "postiz",
+        "social-media",
+        "scheduling",
+        "automation",
+        "ai-agent",
+        "twitter",
+        "linkedin",
+        "instagram",
+        "tiktok",
+        "youtube",
+        "reddit"
+      ],
+      "skills": [
+        "./skills/postiz"
+      ]
+    }
+  ]
+}

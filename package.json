@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "tsup --watch",
+    "sync-skill": "cp SKILL.md skills/postiz/SKILL.md",
     "build": "tsup",
     "start": "node ./dist/index.js",
     "prepublishOnly": "pnpm run build",

@@ -1,8 +1,35 @@
+<p align="center">
+  <img src="assets/logo.svg" alt="Postiz" width="96" />
+</p>
+
 ## Install as a skill
 
 ```bash
 npx skills add gitroomhq/postiz-agent
 ```
+
+### Claude Code plugin
+
+```bash
+/plugin marketplace add gitroomhq/postiz-agent
+/plugin install postiz@postiz-agent
+```
+
+### Cursor plugin
+
+This repo ships a [Cursor plugin](https://cursor.com/docs/reference/plugins) manifest at `.cursor-plugin/plugin.json`.
+
+- **From the marketplace / Customize panel:** open **Customize** in the Cursor sidebar, find **postiz**, and select **Install** (project or user scope).
+- **Local install (development):**
+
+  ```bash
+  git clone https://github.com/gitroomhq/postiz-agent.git
+  ln -s "$(pwd)/postiz-agent" ~/.cursor/plugins/local/postiz
+  ```
+
+  then restart Cursor or run **Developer: Reload Window**.
+
+The plugin exposes the `postiz` skill, which drives the `postiz` CLI (the CLI handles media uploads, which is required for image/video posts). Make sure the CLI is installed (`npm install -g postiz`) and authenticated (`postiz auth:login` or `export POSTIZ_API_KEY=...`) before asking the agent to post.
 
 # Postiz CLI
 
