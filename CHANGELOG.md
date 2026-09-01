@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.17] - 2026-09-01
+
+### Added
+- Grok Build plugin support: `.grok-plugin/plugin.json` and `.grok-plugin/marketplace.json` (validated with xAI's `validate-catalog.py`). The Grok manifest also declares the hosted Postiz MCP server (`https://mcp.postiz.com/mcp-oauth-dynamic`, OAuth on first connect) via its `mcpServers` field. The Claude Code and Cursor plugins stay skill/CLI-only — there is intentionally no root `.mcp.json`, so installing those plugins never registers a second Postiz MCP server next to an existing connector.
+
+## [2.0.16] - 2026-09-01
+
 ### Added
 - Cursor plugin support: `.cursor-plugin/plugin.json` and `.cursor-plugin/marketplace.json` so the repo installs as a [Cursor plugin](https://cursor.com/docs/reference/plugins) alongside the existing Claude Code plugin. `skills/postiz/SKILL.md` is now a real file instead of a symlink, regenerated from the root `SKILL.md` by a GitHub Action on every published release (or `pnpm sync-skill` locally).
 - `posts:settings` - Update a post's provider settings via `PUT /public/v1/posts/:id/settings` (merged — only the keys you pass change; unpublished DRAFT/QUEUE posts only).

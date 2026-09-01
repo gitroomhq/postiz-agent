@@ -15,6 +15,12 @@ npx skills add gitroomhq/postiz-agent
 /plugin install postiz@postiz-agent
 ```
 
+### Grok Build plugin
+
+Postiz is listed in the [xAI plugin marketplace](https://github.com/xai-org/plugin-marketplace) — install it from the marketplace inside Grok Build. This repo also carries its own `.grok-plugin/plugin.json` manifest and `.grok-plugin/marketplace.json` catalog, so it can be added as a marketplace source directly.
+
+The Grok plugin also bundles the hosted Postiz MCP server (`https://mcp.postiz.com/mcp-oauth-dynamic`) via the `mcpServers` field in `.grok-plugin/plugin.json` — you'll be asked to sign in to Postiz on first connection; no token or local install needed. The Claude Code and Cursor plugins are skill/CLI-only and do not register an MCP server.
+
 ### Cursor plugin
 
 This repo ships a [Cursor plugin](https://cursor.com/docs/reference/plugins) manifest at `.cursor-plugin/plugin.json`.

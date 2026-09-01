@@ -1,0 +1,30 @@
+{
+  "name": "postiz",
+  "version": "2.0.17",
+  "description": "Postiz social media automation. Schedule posts, manage integrations, upload media, and track analytics across 28+ platforms including X, LinkedIn, Reddit, YouTube, TikTok, and Instagram.",
+  "author": {
+    "name": "Nevo David",
+    "email": "nevo@postiz.com",
+    "url": "https://postiz.com"
+  },
+  "homepage": "https://postiz.com",
+  "repository": "https://github.com/gitroomhq/postiz-agent",
+  "license": "AGPL-3.0",
+  "logo": "assets/logo.svg",
+  "keywords": [
+    "postiz",
+    "postiz cli",
+    "social media scheduler",
+    "social media agentic scheduler",
+    "schedule social media posts",
+    "social media automation"
+  ],
+  "skills": ["./skills/postiz"],
+  "mcpServers": {
+    "postiz": {
+      "type": "http",
+      "url": "https://mcp.postiz.com/mcp-oauth-dynamic",
+      "note": "Official Postiz MCP server (hosted, streamable HTTP). Authorizes via OAuth on first connection — the agent is prompted to sign in to Postiz; no token or local install required. Lets the agent manage your social media posts"
+    }
+  }
+}

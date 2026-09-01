@@ -1,0 +1,25 @@
+{
+  "name": "postiz-agent",
+  "description": "Postiz social media automation for AI agents — schedule and publish posts across 28+ platforms",
+  "owner": {
+    "name": "Nevo David",
+    "email": "nevo@postiz.com"
+  },
+  "plugins": [
+    {
+      "name": "postiz",
+      "description": "Postiz social media automation. Schedule posts, manage integrations, upload media, and track analytics across 28+ platforms including X, LinkedIn, Reddit, YouTube, TikTok, and Instagram.",
+      "category": "productivity",
+      "source": { "type": "local", "path": "./" },
+      "homepage": "https://postiz.com",
+      "keywords": [
+        "postiz",
+        "social media scheduler",
+        "social media agentic scheduler",
+        "schedule social media posts",
+        "social media automation"
+      ],
+      "domains": ["postiz.com"]
+    }
+  ]
+}
