@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `posts:list --includeAttachments` returns each post's attachments (`{ id, path, thumbnail }`) so media can be reused when reposting to another channel (requires the matching Postiz API release).
+
 ## [2.0.17] - 2026-09-01
 
 ### Added

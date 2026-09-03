@@ -205,6 +205,10 @@ postiz posts:list
 # List posts in date range
 postiz posts:list --startDate "2024-01-01T00:00:00Z" --endDate "2024-12-31T23:59:59Z"
 
+# List posts with their attachments ({ id, path, thumbnail } per post).
+# To mirror/repost on another channel, reuse these `path` values as attachments - do not re-upload.
+postiz posts:list --includeAttachments
+
 # Delete post
 postiz posts:delete <post-id>
 
@@ -593,6 +597,7 @@ All dates use ISO 8601 format:
 - Schedule posts: `-s "2024-12-31T12:00:00Z"`
 - List posts: `--startDate "2024-01-01T00:00:00Z" --endDate "2024-12-31T23:59:59Z"`
 - Defaults: `posts:list` uses 30 days ago to 30 days from now
+- `posts:list --includeAttachments` adds each post's `attachments`; reuse their `path` values to repost media without uploading again
 
 ### Media Upload Response
 

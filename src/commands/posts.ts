@@ -169,6 +169,10 @@ export async function listPosts(args: any) {
     filters.customer = args.customer;
   }
 
+  if (args.includeAttachments) {
+    filters.includeAttachments = true;
+  }
+
   try {
     const result = await api.listPosts(filters);
     console.log('📋 Posts:');
