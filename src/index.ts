@@ -134,6 +134,10 @@ yargs(hideBin(process.argv))
           describe: 'Customer ID (optional)',
           type: 'string',
         })
+        .option('includeAttachments', {
+          describe: 'Include each post\'s attachments (media paths) in the output',
+          type: 'boolean',
+        })
         .example('$0 posts:list', 'List all posts (last 30 days to next 30 days)')
         .example(
           '$0 posts:list --startDate "2024-01-01T00:00:00Z" --endDate "2024-12-31T23:59:59Z"',
@@ -142,6 +146,10 @@ yargs(hideBin(process.argv))
         .example(
           '$0 posts:list --customer "customer-id"',
           'List posts for a specific customer'
+        )
+        .example(
+          '$0 posts:list --includeAttachments',
+          'List posts with their attachments (to reuse the media on another channel)'
         );
     },
     listPosts as any

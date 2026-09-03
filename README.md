@@ -214,9 +214,12 @@ postiz posts:create --json post.json
 postiz posts:list
 postiz posts:list --startDate "2024-01-01T00:00:00Z" --endDate "2024-12-31T23:59:59Z"
 postiz posts:list --customer "customer-id"
+postiz posts:list --includeAttachments
 ```
 
 Defaults to last 30 days to next 30 days if dates not specified. Each returned post includes its current `settings` (returned as a JSON string — `JSON.parse` it). The intended workflow is `posts:list` (read current settings) → `posts:settings` (patch them).
+
+With `--includeAttachments` each post also carries an `attachments` array (`{ id, path, thumbnail }`). To repost or mirror a post on another channel, pass those `path` values as the new post's attachments instead of uploading the file again.
 
 **Delete post**
 ```bash
