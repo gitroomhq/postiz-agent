@@ -205,4 +205,29 @@ export class PostizAPI {
       body: JSON.stringify({ methodName, data }),
     });
   }
+
+  async createClipping(data: {
+    url: string;
+    integrations?: string[];
+    clips?: number;
+    fit?: 'crop' | 'blur';
+  }) {
+    return this.request('/public/v1/clipping', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async listClippings(page?: number) {
+    const query = page ? `?page=${encodeURIComponent(String(page))}` : '';
+    return this.request(`/public/v1/clipping${query}`, {
+      method: 'GET',
+    });
+  }
+
+  async getClipping(id: string) {
+    return this.request(`/public/v1/clipping/${id}`, {
+      method: 'GET',
+    });
+  }
 }

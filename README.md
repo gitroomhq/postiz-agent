@@ -359,6 +359,41 @@ postiz posts:create -c "Check out my video!" -s "2024-12-31T12:00:00Z" -m "$PATH
 
 ---
 
+### Clipping
+
+Turn a long YouTube video into short vertical clips with burned-in captions. The best parts are picked automatically and every clip is saved to your media library. Pass integrations to also get a **draft** post per clip on every channel (nothing is scheduled or published).
+
+**Start a clipping**
+```bash
+postiz clipping:create "https://www.youtube.com/watch?v=VIDEO_ID"
+postiz clipping:create "https://www.youtube.com/watch?v=VIDEO_ID" -n 3 -f crop -i "tiktok-id,instagram-id"
+```
+
+| Option | Alias | Description |
+|--------|-------|-------------|
+| `--integrations` | `-i` | Comma-separated integration IDs to create a draft post for every clip |
+| `--clips` | `-n` | Maximum number of clips, 1-10 (default: 5) |
+| `--fit` | `-f` | `blur` (default) keeps the whole picture over a blurred copy of itself, `crop` fills the clip and cuts the sides |
+
+Returns `{"id": "<clipping-id>"}` right away — clipping takes several minutes.
+
+**Check the status and get the clips**
+```bash
+postiz clipping:status <clipping-id>
+```
+
+The `status` moves through `analysing`, `transcribing` (only when the video has no usable captions), `picking` and `rendering`, and ends on `completed` or `failed`. When completed, every clip carries its `title`, `content`, hosted video `path` and `thumbnail`. When failed, `error` says why and the clipping minutes are given back.
+
+**List clippings**
+```bash
+postiz clipping:list
+postiz clipping:list --page 2
+```
+
+Clipping uses the clipping minutes of your subscription: one minute for every minute of the source video. Only one clipping runs at a time per account.
+
+---
+
 ## Platform-Specific Features
 
 ### Reddit
@@ -641,6 +676,9 @@ The CLI interacts with these Postiz API endpoints:
 | `/public/v1/analytics/:integration` | GET | Get platform analytics |
 | `/public/v1/analytics/post/:postId` | GET | Get post analytics |
 | `/public/v1/upload` | POST | Upload media |
+| `/public/v1/clipping` | POST | Start clipping a YouTube video |
+| `/public/v1/clipping` | GET | List clippings (optional `?page=`) |
+| `/public/v1/clipping/:id` | GET | Get a clipping and its clips |
 
 ---
 

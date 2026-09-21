@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.19] - 2026-09-21
+
+### Added
+- `clipping:create <url>` - Turn a long YouTube video into short vertical clips with burned-in captions via `POST /public/v1/clipping` (`--clips` 1-10, `--fit blur|crop`, `--integrations` to draft every clip on the given channels).
+- `clipping:status <id>` - Get a clipping's progress and its clips (hosted video URL, title, post text) via `GET /public/v1/clipping/:id`.
+- `clipping:list` - List previous clippings via `GET /public/v1/clipping` (`--page`, 20 per page).
+
 ## [2.0.18] - 2026-09-11
 
 ### Added

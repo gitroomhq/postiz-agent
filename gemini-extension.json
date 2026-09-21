@@ -1,6 +1,6 @@
 {
   "name": "postiz",
-  "version": "2.0.18",
+  "version": "2.0.19",
   "description": "Postiz social media automation: schedule, draft, and publish posts, manage connected channels, upload media, and track analytics across 28+ platforms including X, LinkedIn, Instagram, Facebook, Threads, TikTok, YouTube, Reddit, Bluesky, Mastodon, Discord, Slack, and Telegram. Bundles the postiz skill and the hosted Postiz MCP server.",
   "mcpServers": {
     "postiz": {
