@@ -2,6 +2,26 @@
   <img src="assets/logo.svg" alt="Postiz" width="96" />
 </p>
 
+<p align="center">
+  <strong>Schedule posts with agents to:</strong><br />
+  <a href="https://postiz.com/chatgpt">ChatGPT</a> ·
+  <a href="https://postiz.com/claude">Claude</a> ·
+  <a href="https://postiz.com/claude-cowork">Claude Cowork</a> ·
+  <a href="https://postiz.com/claude-code">Claude Code</a> ·
+  <a href="https://postiz.com/codex">Codex</a> ·
+  <a href="https://postiz.com/cursor">Cursor</a> ·
+  <a href="https://postiz.com/openclaw">OpenClaw</a> ·
+  <a href="https://postiz.com/hermes">Hermes Agent</a> ·
+  <a href="https://postiz.com/grok-bot">Grok Bot</a> ·
+  <a href="https://postiz.com/grok-build">Grok Build</a> ·
+  <a href="https://postiz.com/muse">Muse</a> ·
+  <a href="https://postiz.com/perplexity-computer">Perplexity Computer</a> ·
+  <a href="https://postiz.com/nanoclaw">nanoclaw</a> ·
+  <a href="https://postiz.com/paperclip">Paperclip</a> ·
+  <a href="https://postiz.com/mcp">MCP Server</a> ·
+  <a href="https://postiz.com/agent">AI Agents CLI</a>
+</p>
+
 ## Install as a skill
 
 ```bash
