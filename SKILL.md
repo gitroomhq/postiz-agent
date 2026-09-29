@@ -187,7 +187,7 @@ postiz posts:create -c "Content" -s "2024-12-31T12:00:00Z" -i "twitter-id,linked
 postiz posts:create \
   -c "Content" \
   -s "2024-12-31T12:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Post","type":"text"}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"My Post","type":"self"}}]}' \
   -i "reddit-id"
 
 # Complex post from JSON file
@@ -325,15 +325,15 @@ postiz clipping:list --page 2
 # Get Reddit integration ID
 REDDIT_ID=$(postiz integrations:list | jq -r '.[] | select(.identifier=="reddit") | .id')
 
-# Fetch available flairs
-FLAIRS=$(postiz integrations:trigger "$REDDIT_ID" getFlairs -d '{"subreddit":"programming"}')
-FLAIR_ID=$(echo "$FLAIRS" | jq -r '.output[0].id')
+# Fetch flairs and allowed post types
+FLAIRS=$(postiz integrations:trigger "$REDDIT_ID" restrictions -d '{"subreddit":"/r/programming"}')
+FLAIR_ID=$(echo "$FLAIRS" | jq -r '.output.flairs[0].id')
 
 # Use in post
 postiz posts:create \
   -c "My post content" \
   -s "2024-12-31T12:00:00Z" \
-  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"programming\",\"title\":\"Post Title\",\"type\":\"text\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"Discussion\"}}}]}" \
+  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"/r/programming\",\"title\":\"Post Title\",\"type\":\"self\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"Discussion\"}}}]}" \
   -i "$REDDIT_ID"
 ```
 
@@ -541,7 +541,7 @@ Many integrations require dynamic data (IDs, tags, playlists) that can't be hard
 4. **Use output** - Tool returns data to use in post settings
 
 **Example tools by platform:**
-- **Reddit**: `getFlairs`, `searchSubreddits`, `getSubreddits`
+- **Reddit**: `subreddits` (search, `{"word":"..."}`), `restrictions` (flairs and allowed post types, `{"subreddit":"/r/name"}`)
 - **YouTube**: `getPlaylists`, `getCategories`, `getChannels`
 - **LinkedIn**: `getCompanies`, `getOrganizations`
 - **Twitter/X**: `getListsowned`, `getCommunities`
@@ -561,9 +561,9 @@ Platform-specific settings use a discriminator pattern with `__type` field:
         "__type": "reddit",
         "subreddit": [{
           "value": {
-            "subreddit": "programming",
+            "subreddit": "/r/programming",
             "title": "Post Title",
-            "type": "text",
+            "type": "self",
             "url": "",
             "is_flair_required": false
           }
@@ -667,7 +667,7 @@ JSON mode supports:
 postiz posts:create \
   -c "Post content" \
   -s "2024-12-31T12:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Title","type":"text","url":"","is_flair_required":false}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"My Title","type":"self","url":"","is_flair_required":false}}]}' \
   -i "reddit-id"
 ```
 

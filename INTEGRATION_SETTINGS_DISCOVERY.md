@@ -77,7 +77,7 @@ Output:
 ```json
 {
   "output": {
-    "maxLength": 40000,
+    "maxLength": 10000,
     "settings": {
       "properties": {
         "subreddit": {
@@ -138,9 +138,9 @@ postiz posts:create \
   --settings '{
     "subreddit": [{
       "value": {
-        "subreddit": "programming",
+        "subreddit": "/r/programming",
         "title": "Check this out!",
-        "type": "text",
+        "type": "self",
         "url": "",
         "is_flair_required": false
       }
@@ -337,9 +337,9 @@ postiz posts:create \
   --settings '{
     "subreddit": [{
       "value": {
-        "subreddit": "programming",
+        "subreddit": "/r/programming",
         "title": "Interesting post",
-        "type": "text",
+        "type": "self",
         "url": "",
         "is_flair_required": false
       }

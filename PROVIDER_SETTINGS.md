@@ -35,9 +35,9 @@ In the JSON file, specify settings per integration:
       "__type": "reddit",
       "subreddit": [{
         "value": {
-          "subreddit": "programming",
+          "subreddit": "/r/programming",
           "title": "My Post Title",
-          "type": "text",
+          "type": "self",
           "url": "",
           "is_flair_required": false
         }
@@ -52,12 +52,12 @@ In the JSON file, specify settings per integration:
 ### Reddit (`reddit`)
 
 **Settings:**
-- `subreddit` (required): Subreddit name
+- `subreddit` (required): Subreddit name, must start with `/r/` (e.g. `/r/programming`)
 - `title` (required): Post title
-- `type` (required): `"text"` or `"link"`
+- `type` (required): `"self"` (text post), `"link"` (requires `url`), or `"media"` (uploads the post's first attached image or mp4; exactly one media item)
 - `url` (required for links): URL if type is "link"
 - `is_flair_required` (boolean): Whether flair is required
-- `flair` (optional): Flair object with `id` and `name`
+- `flair` (required when `is_flair_required` is true): Flair object with `id` and `name`, from the `restrictions` tool
 
 **Example:**
 ```bash
@@ -67,9 +67,9 @@ postiz posts:create \
   --settings '{
     "subreddit": [{
       "value": {
-        "subreddit": "programming",
+        "subreddit": "/r/programming",
         "title": "Check out this cool project",
-        "type": "text",
+        "type": "self",
         "url": "",
         "is_flair_required": false
       }
@@ -308,9 +308,9 @@ For complex settings, it's easier to use JSON files:
       "__type": "reddit",
       "subreddit": [{
         "value": {
-          "subreddit": "programming",
+          "subreddit": "/r/programming",
           "title": "My Cool Project - Built with TypeScript",
-          "type": "text",
+          "type": "self",
           "url": "",
           "is_flair_required": true,
           "flair": {
@@ -382,9 +382,9 @@ postiz posts:create --json youtube-video.json
         "__type": "reddit",
         "subreddit": [{
           "value": {
-            "subreddit": "programming",
+            "subreddit": "/r/programming",
             "title": "Post Title",
-            "type": "text",
+            "type": "self",
             "url": "",
             "is_flair_required": false
           }

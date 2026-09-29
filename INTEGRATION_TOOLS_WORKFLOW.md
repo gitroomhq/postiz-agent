@@ -47,7 +47,7 @@ postiz integrations:settings reddit-abc123
 ```json
 {
   "output": {
-    "maxLength": 40000,
+    "maxLength": 10000,
     "settings": {
       "properties": {
         "subreddit": {
@@ -68,23 +68,23 @@ postiz integrations:settings reddit-abc123
     },
     "tools": [
       {
-        "methodName": "getFlairs",
-        "description": "Get available flairs for a subreddit",
+        "methodName": "subreddits",
+        "description": "Get list of subreddits with information",
         "dataSchema": [
           {
-            "key": "subreddit",
-            "description": "The subreddit name",
+            "key": "word",
+            "description": "Search subreddit by string",
             "type": "string"
           }
         ]
       },
       {
-        "methodName": "searchSubreddits",
-        "description": "Search for subreddits",
+        "methodName": "restrictions",
+        "description": "Get list of flairs and restrictions for a subreddit",
         "dataSchema": [
           {
-            "key": "query",
-            "description": "Search query",
+            "key": "subreddit",
+            "description": "Search flairs and restrictions by subreddit key should be \"/r/[name]\"",
             "type": "string"
           }
         ]
@@ -94,27 +94,28 @@ postiz integrations:settings reddit-abc123
 }
 ```
 
-### 2. Get Flairs for the Subreddit
+### 2. Get Flairs and Restrictions for the Subreddit
 
 ```bash
-postiz integrations:trigger reddit-abc123 getFlairs -d '{"subreddit":"programming"}'
+postiz integrations:trigger reddit-abc123 restrictions -d '{"subreddit":"/r/programming"}'
 ```
 
 **Output:**
 ```json
 {
-  "output": [
-    {
-      "id": "flair-12345",
-      "name": "Discussion"
-    },
-    {
-      "id": "flair-67890",
-      "name": "Tutorial"
-    }
-  ]
+  "output": {
+    "subreddit": "/r/programming",
+    "allow": ["self", "link"],
+    "is_flair_required": true,
+    "flairs": [
+      { "id": "flair-12345", "name": "Discussion" },
+      { "id": "flair-67890", "name": "Tutorial" }
+    ]
+  }
 }
 ```
+
+`allow` lists the post types the subreddit accepts; pick `type` from it.
 
 ### 3. Create Post with Flair ID
 
@@ -125,9 +126,9 @@ postiz posts:create \
   --settings '{
     "subreddit": [{
       "value": {
-        "subreddit": "programming",
+        "subreddit": "/r/programming",
         "title": "My Cool Project",
-        "type": "text",
+        "type": "self",
         "url": "",
         "is_flair_required": true,
         "flair": {
@@ -263,12 +264,12 @@ postiz posts:create \
 
 ```json
 {
-  "methodName": "getFlairs",
-  "description": "Get available flairs for a subreddit",
+  "methodName": "restrictions",
+  "description": "Get list of flairs and restrictions for a subreddit",
   "dataSchema": [
     {
       "key": "subreddit",
-      "description": "The subreddit name",
+      "description": "Subreddit, as \"/r/[name]\"",
       "type": "string"
     }
   ]
@@ -292,9 +293,8 @@ postiz integrations:trigger <integration-id> <methodName> -d '{"key":"value"}'
 ## Common Tool Methods
 
 ### Reddit
-- `getFlairs` - Get flairs for a subreddit
-- `searchSubreddits` - Search for subreddits
-- `getSubreddits` - Get subscribed subreddits
+- `subreddits` - Search subreddits by name (`{"word":"..."}`)
+- `restrictions` - Get flairs, flair requirement and allowed post types (`{"subreddit":"/r/name"}`)
 
 ### YouTube
 - `getPlaylists` - Get your playlists
@@ -354,14 +354,14 @@ postiz integrations:trigger reddit-123 invalidMethod
 ### Missing Required Data
 
 ```bash
-postiz integrations:trigger reddit-123 getFlairs
+postiz integrations:trigger reddit-123 restrictions
 # ❌ Missing required parameter: subreddit
 ```
 
 ### Integration Not Found
 
 ```bash
-postiz integrations:trigger invalid-id getFlairs
+postiz integrations:trigger invalid-id restrictions
 # ❌ Failed to trigger tool: Integration not found
 ```
 
@@ -388,9 +388,9 @@ echo $SETTINGS | jq '.output.tools'
 # 2. Get flairs
 echo ""
 echo "🏷️  Getting flairs..."
-FLAIRS=$(postiz integrations:trigger $INTEGRATION_ID getFlairs -d '{"subreddit":"programming"}')
-FLAIR_ID=$(echo $FLAIRS | jq -r '.output[0].id')
-FLAIR_NAME=$(echo $FLAIRS | jq -r '.output[0].name')
+FLAIRS=$(postiz integrations:trigger $INTEGRATION_ID restrictions -d '{"subreddit":"/r/programming"}')
+FLAIR_ID=$(echo $FLAIRS | jq -r '.output.flairs[0].id')
+FLAIR_NAME=$(echo $FLAIRS | jq -r '.output.flairs[0].name')
 
 echo "Selected flair: $FLAIR_NAME ($FLAIR_ID)"
 
@@ -403,9 +403,9 @@ postiz posts:create \
   --settings "{
     \"subreddit\": [{
       \"value\": {
-        \"subreddit\": \"programming\",
+        \"subreddit\": \"/r/programming\",
         \"title\": \"My Post Title\",
-        \"type\": \"text\",
+        \"type\": \"self\",
         \"url\": \"\",
         \"is_flair_required\": true,
         \"flair\": {

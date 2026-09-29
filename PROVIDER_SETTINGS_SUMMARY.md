@@ -69,9 +69,9 @@ postiz posts:create \
   --settings '{
     "subreddit": [{
       "value": {
-        "subreddit": "programming",
+        "subreddit": "/r/programming",
         "title": "My Cool Project",
-        "type": "text",
+        "type": "self",
         "url": "",
         "is_flair_required": false
       }

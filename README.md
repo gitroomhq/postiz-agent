@@ -186,8 +186,8 @@ Fetch dynamic data like Reddit flairs, YouTube playlists, LinkedIn companies, et
 
 **Examples:**
 ```bash
-# Get Reddit flairs
-postiz integrations:trigger reddit-123 getFlairs -d '{"subreddit":"programming"}'
+# Get Reddit flairs and allowed post types
+postiz integrations:trigger reddit-123 restrictions -d '{"subreddit":"/r/programming"}'
 
 # Get YouTube playlists
 postiz integrations:trigger youtube-456 getPlaylists
@@ -235,7 +235,7 @@ postiz posts:create -c "Content" -s "2024-12-31T12:00:00Z" -i "twitter-id,linked
 postiz posts:create \
   -c "Content" \
   -s "2024-12-31T12:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"Post Title","type":"text"}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"Post Title","type":"self"}}]}' \
   -i "reddit-id"
 ```
 
@@ -419,13 +419,13 @@ Clipping uses the clipping minutes of your subscription: one minute for every mi
 ### Reddit
 ```bash
 # Get available flairs
-postiz integrations:trigger reddit-id getFlairs -d '{"subreddit":"programming"}'
+postiz integrations:trigger reddit-id restrictions -d '{"subreddit":"/r/programming"}'
 
 # Post with subreddit and flair
 postiz posts:create \
   -c "Content" \
   -s "2024-12-31T12:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Post","type":"text","is_flair_required":true,"flair":{"id":"flair-123","name":"Discussion"}}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"My Post","type":"self","is_flair_required":true,"flair":{"id":"flair-123","name":"Discussion"}}}]}' \
   -i "reddit-id"
 ```
 
@@ -606,13 +606,13 @@ postiz posts:create \
 ```bash
 #!/bin/bash
 REDDIT_ID=$(postiz integrations:list | jq -r '.[] | select(.identifier=="reddit") | .id')
-FLAIRS=$(postiz integrations:trigger "$REDDIT_ID" getFlairs -d '{"subreddit":"programming"}')
-FLAIR_ID=$(echo "$FLAIRS" | jq -r '.output[0].id')
+FLAIRS=$(postiz integrations:trigger "$REDDIT_ID" restrictions -d '{"subreddit":"/r/programming"}')
+FLAIR_ID=$(echo "$FLAIRS" | jq -r '.output.flairs[0].id')
 
 postiz posts:create \
   -c "My post content" \
   -s "2024-12-31T12:00:00Z" \
-  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"programming\",\"title\":\"Post Title\",\"type\":\"text\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"Discussion\"}}}]}" \
+  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"/r/programming\",\"title\":\"Post Title\",\"type\":\"self\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"Discussion\"}}}]}" \
   -i "$REDDIT_ID"
 ```
 
@@ -864,7 +864,7 @@ AGPL-3.0
 |----------|------------------|----------|
 | Twitter/X | getLists, getCommunities | who_can_reply_post |
 | LinkedIn | getCompanies | companyId, carousel |
-| Reddit | getFlairs, searchSubreddits | subreddit, title, flair |
+| Reddit | subreddits, restrictions | subreddit, title, type, flair |
 | YouTube | getPlaylists, getCategories | title, type, tags, playlistId |
 | TikTok | - | content_posting_method, privacy_level, comment, brand toggles, duet/stitch/video_made_with_ai (video only), autoAddMusic (photo only) |
 | Instagram | - | post_type (post/story) |

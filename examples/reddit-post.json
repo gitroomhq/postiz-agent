@@ -15,9 +15,9 @@
       "__type": "reddit",
       "subreddit": [{
         "value": {
-          "subreddit": "programming",
+          "subreddit": "/r/programming",
           "title": "Built a CLI tool for social media scheduling with TypeScript",
-          "type": "text",
+          "type": "self",
           "url": "",
           "is_flair_required": false
         }

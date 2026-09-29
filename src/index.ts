@@ -104,7 +104,7 @@ yargs(hideBin(process.argv))
           'Complex post from JSON file'
         )
         .example(
-          '$0 posts:create -c "Post to subreddit" -s "2024-12-31T12:00:00Z" --settings \'{"subreddit":[{"value":{"subreddit":"programming","title":"My Title","type":"text","url":"","is_flair_required":false}}]}\' -i "reddit-123"',
+          '$0 posts:create -c "Post to subreddit" -s "2024-12-31T12:00:00Z" --settings \'{"subreddit":[{"value":{"subreddit":"/r/programming","title":"My Title","type":"self","url":"","is_flair_required":false}}]}\' -i "reddit-123"',
           'Reddit post with specific subreddit settings'
         )
         .example(
@@ -311,11 +311,11 @@ yargs(hideBin(process.argv))
           type: 'string',
         })
         .example(
-          '$0 integrations:trigger reddit-123 getSubreddits',
-          'Get list of subreddits'
+          '$0 integrations:trigger reddit-123 restrictions -d \'{"subreddit":"/r/programming"}\'',
+          'Get flairs and allowed post types for a subreddit'
         )
         .example(
-          '$0 integrations:trigger reddit-123 searchSubreddits -d \'{"query":"programming"}\'',
+          '$0 integrations:trigger reddit-123 subreddits -d \'{"word":"programming"}\'',
           'Search for subreddits'
         )
         .example(
