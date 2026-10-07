@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `media:list` - List media already uploaded to the media library via `GET /public/v1/media` (newest first, 18 per page, `--search` by original file name, `--page`), so existing uploads can be reused without uploading again.
+
 ## [2.0.19] - 2026-09-21
 
 ### Added

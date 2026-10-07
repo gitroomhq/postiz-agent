@@ -71,6 +71,17 @@ export class PostizAPI {
     });
   }
 
+  async listMedia(page?: number, search?: string) {
+    const params = new URLSearchParams();
+    if (page) params.append('page', String(page));
+    if (search) params.append('search', search);
+    const queryString = params.toString();
+    return this.request(
+      queryString ? `/public/v1/media?${queryString}` : '/public/v1/media',
+      { method: 'GET' }
+    );
+  }
+
   async upload(file: Buffer, filename: string) {
     const formData = new FormData();
     const extension = filename.split('.').pop()?.toLowerCase() || '';
