@@ -1,6 +1,6 @@
 {
   "name": "postiz",
-  "version": "2.0.16",
+  "version": "2.0.19",
   "description": "Postiz CLI - Command line interface for the Postiz social media scheduling API",
   "main": "dist/index.js",
   "bin": {
@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "tsup --watch",
+    "sync-skill": "cp SKILL.md skills/postiz/SKILL.md",
     "build": "tsup",
     "start": "node ./dist/index.js",
     "prepublishOnly": "pnpm run build",

@@ -1,0 +1,6 @@
+{
+  "postiz": {
+    "type": "http",
+    "url": "https://mcp.postiz.com/mcp-oauth-dynamic"
+  }
+}

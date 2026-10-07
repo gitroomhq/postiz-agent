@@ -1,0 +1,11 @@
+{
+  "name": "postiz",
+  "version": "2.0.19",
+  "description": "Postiz social media automation: schedule, draft, and publish posts, manage connected channels, upload media, and track analytics across 28+ platforms including X, LinkedIn, Instagram, Facebook, Threads, TikTok, YouTube, Reddit, Bluesky, Mastodon, Discord, Slack, and Telegram. Bundles the postiz skill and the hosted Postiz MCP server.",
+  "mcpServers": {
+    "postiz": {
+      "httpUrl": "https://mcp.postiz.com/mcp-oauth-dynamic",
+      "description": "Official Postiz MCP server (hosted, streamable HTTP). Authorizes via OAuth on first connection: Gemini CLI opens a browser to sign in to Postiz; no token or local install required."
+    }
+  }
+}

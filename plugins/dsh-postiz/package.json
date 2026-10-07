@@ -1,0 +1,62 @@
+{
+  "name": "dsh-postiz",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness plugin that connects the agent to Postiz over MCP: list connected channels, fetch platform posting rules, and schedule, draft, or publish social media posts across 28+ platforms.",
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml"
+  },
+  "files": [
+    "lib/",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/schemastery": "^3.18.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "postiz",
+    "mcp",
+    "social-media",
+    "social-media-scheduler",
+    "scheduling",
+    "automation"
+  ],
+  "author": {
+    "name": "Nevo David",
+    "email": "nevo@postiz.com",
+    "url": "https://postiz.com"
+  },
+  "homepage": "https://github.com/gitroomhq/postiz-agent/tree/main/plugins/dsh-postiz#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gitroomhq/postiz-agent.git",
+    "directory": "plugins/dsh-postiz"
+  },
+  "bugs": {
+    "url": "https://github.com/gitroomhq/postiz-agent/issues"
+  },
+  "license": "AGPL-3.0",
+  "publishConfig": {
+    "access": "public"
+  }
+}

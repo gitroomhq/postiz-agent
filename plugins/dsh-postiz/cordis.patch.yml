@@ -1,0 +1,38 @@
+# Patch layer contributed by the dsh-postiz bundle.
+#
+# Two rows:
+#   1. `postiz`      - this package's provider plugin. Reads the Postiz API key
+#                      (POSTIZ_API_KEY by default), exposes `ctx.postiz` with the
+#                      MCP endpoint URL and auth headers, and registers the
+#                      `postiz` skill that teaches the agent the posting workflow.
+#   2. `postiz-mcp`  - one @deepseek-ai/dsh-mcp-client instance that connects to
+#                      the Postiz MCP server over streamable HTTP and registers
+#                      its tools as mcp__postiz__* (integrationList,
+#                      integrationSchema, schedulePostTool, ...).
+#
+# Configuration (override the `postiz` row in your profile's cordis.patch.yml):
+#   apiKeyEnv  - env var holding the Postiz API key (default: POSTIZ_API_KEY)
+#   apiKey     - inline key; prefer the env var or a .env file in $DSH_HOME
+#   baseUrl    - Postiz host (default: https://mcp.postiz.com; self-hosted
+#                instances use their own backend URL)
+#   skill      - register the `postiz` workflow skill (default: true)
+- insert:
+    - id: postiz
+      name: dsh-postiz
+      config:
+        apiKeyEnv: POSTIZ_API_KEY
+        baseUrl: https://mcp.postiz.com
+    - id: postiz-mcp
+      name: '@deepseek-ai/dsh-mcp-client'
+      inject: [postiz]
+      config:
+        transport: streamable-http
+        serverName: postiz
+        url: !!js ctx.postiz.url
+        headers: !!js ctx.postiz.headers
+        failOnStartupError: false
+        reconnect:
+          enabled: true
+          initialDelayMs: 2000
+          maxDelayMs: 30000
+          maxAttempts: 10

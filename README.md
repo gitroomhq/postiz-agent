@@ -1,8 +1,91 @@
+<p align="center">
+  <img src="assets/logo.svg" alt="Postiz" width="96" />
+</p>
+
+<p align="center">
+  <strong>Schedule posts with agents to:</strong><br />
+  <a href="https://postiz.com/chatgpt">ChatGPT</a> ·
+  <a href="https://postiz.com/claude">Claude</a> ·
+  <a href="https://postiz.com/claude-cowork">Claude Cowork</a> ·
+  <a href="https://postiz.com/claude-code">Claude Code</a> ·
+  <a href="https://postiz.com/codex">Codex</a> ·
+  <a href="https://postiz.com/cursor">Cursor</a> ·
+  <a href="https://postiz.com/openclaw">OpenClaw</a> ·
+  <a href="https://postiz.com/hermes">Hermes Agent</a> ·
+  <a href="https://postiz.com/grok-bot">Grok Bot</a> ·
+  <a href="https://postiz.com/grok-build">Grok Build</a> ·
+  <a href="https://postiz.com/muse">Muse</a> ·
+  <a href="https://postiz.com/perplexity-computer">Perplexity Computer</a> ·
+  <a href="https://postiz.com/nanoclaw">nanoclaw</a> ·
+  <a href="https://postiz.com/paperclip">Paperclip</a> ·
+  <a href="https://postiz.com/mcp">MCP Server</a> ·
+  <a href="https://postiz.com/agent">AI Agents CLI</a>
+</p>
+
 ## Install as a skill
 
 ```bash
 npx skills add gitroomhq/postiz-agent
 ```
+
+### Claude Code plugin
+
+```bash
+/plugin marketplace add gitroomhq/postiz-agent
+/plugin install postiz@postiz-agent
+```
+
+### Grok Build plugin
+
+Postiz is listed in the [xAI plugin marketplace](https://github.com/xai-org/plugin-marketplace) — install it from the marketplace inside Grok Build. This repo also carries its own `.grok-plugin/plugin.json` manifest and `.grok-plugin/marketplace.json` catalog, so it can be added as a marketplace source directly.
+
+The Grok plugin also bundles the hosted Postiz MCP server (`https://mcp.postiz.com/mcp-oauth-dynamic`) via the `mcpServers` field in `.grok-plugin/plugin.json` — you'll be asked to sign in to Postiz on first connection; no token or local install needed. The Claude Code and Cursor plugins are skill/CLI-only and do not register an MCP server.
+
+### Cursor plugin
+
+This repo ships a [Cursor plugin](https://cursor.com/docs/reference/plugins) manifest at `.cursor-plugin/plugin.json`.
+
+- **From the marketplace / Customize panel:** open **Customize** in the Cursor sidebar, find **postiz**, and select **Install** (project or user scope).
+- **Local install (development):**
+
+  ```bash
+  git clone https://github.com/gitroomhq/postiz-agent.git
+  ln -s "$(pwd)/postiz-agent" ~/.cursor/plugins/local/postiz
+  ```
+
+  then restart Cursor or run **Developer: Reload Window**.
+
+The plugin exposes the `postiz` skill, which drives the `postiz` CLI (the CLI handles media uploads, which is required for image/video posts). Make sure the CLI is installed (`npm install -g postiz`) and authenticated (`postiz auth:login` or `export POSTIZ_API_KEY=...`) before asking the agent to post.
+
+### Gemini CLI extension
+
+This repo is a [Gemini CLI extension](https://geminicli.com/docs/extensions/) (`gemini-extension.json` at the root) and is indexed in the [extensions gallery](https://geminicli.com/extensions/browse/).
+
+```bash
+gemini extensions install https://github.com/gitroomhq/postiz-agent
+```
+
+It installs the `postiz` skill and the hosted Postiz MCP server (`https://mcp.postiz.com/mcp-oauth-dynamic`). Gemini CLI opens a browser to sign in to Postiz on first use; run `/mcp auth postiz` to re-authenticate. The skill drives the `postiz` CLI for media uploads, so install it with `npm install -g postiz` for image or video posts.
+
+### Qwen Code
+
+Qwen Code installs Claude Code marketplaces directly, so no separate manifest is needed:
+
+```bash
+qwen extensions install gitroomhq/postiz-agent:postiz
+```
+
+### DeepSeek Harness plugin
+
+This repo ships a [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (`dsh`) bundle at [`plugins/dsh-postiz`](plugins/dsh-postiz). It connects the agent to the hosted Postiz MCP server and registers a `postiz` workflow skill.
+
+```bash
+dsh plugin --profile web add "github:gitroomhq/postiz-agent#path:/plugins/dsh-postiz"
+export POSTIZ_API_KEY=your-api-key   # Postiz → Settings → Developers → Public API
+dsh web
+```
+
+The Postiz tools then appear as `mcp__postiz__*` (`integrationList`, `integrationSchema`, `schedulePostTool`, ...). Self-hosted instances override `baseUrl` on the `postiz` row. See the [plugin README](plugins/dsh-postiz/README.md) for configuration.
 
 # Postiz CLI
 
@@ -296,6 +379,41 @@ postiz posts:create -c "Check out my video!" -s "2024-12-31T12:00:00Z" -m "$PATH
 
 ---
 
+### Clipping
+
+Turn a long YouTube video into short vertical clips with burned-in captions. The best parts are picked automatically and every clip is saved to your media library. Pass integrations to also get a **draft** post per clip on every channel (nothing is scheduled or published).
+
+**Start a clipping**
+```bash
+postiz clipping:create "https://www.youtube.com/watch?v=VIDEO_ID"
+postiz clipping:create "https://www.youtube.com/watch?v=VIDEO_ID" -n 3 -f crop -i "tiktok-id,instagram-id"
+```
+
+| Option | Alias | Description |
+|--------|-------|-------------|
+| `--integrations` | `-i` | Comma-separated integration IDs to create a draft post for every clip |
+| `--clips` | `-n` | Maximum number of clips, 1-10 (default: 5) |
+| `--fit` | `-f` | `blur` (default) keeps the whole picture over a blurred copy of itself, `crop` fills the clip and cuts the sides |
+
+Returns `{"id": "<clipping-id>"}` right away — clipping takes several minutes.
+
+**Check the status and get the clips**
+```bash
+postiz clipping:status <clipping-id>
+```
+
+The `status` moves through `analysing`, `transcribing` (only when the video has no usable captions), `picking` and `rendering`, and ends on `completed` or `failed`. When completed, every clip carries its `title`, `content`, hosted video `path` and `thumbnail`. When failed, `error` says why and the clipping minutes are given back.
+
+**List clippings**
+```bash
+postiz clipping:list
+postiz clipping:list --page 2
+```
+
+Clipping uses the clipping minutes of your subscription: one minute for every minute of the source video. Only one clipping runs at a time per account.
+
+---
+
 ## Platform-Specific Features
 
 ### Reddit
@@ -578,6 +696,9 @@ The CLI interacts with these Postiz API endpoints:
 | `/public/v1/analytics/:integration` | GET | Get platform analytics |
 | `/public/v1/analytics/post/:postId` | GET | Get post analytics |
 | `/public/v1/upload` | POST | Upload media |
+| `/public/v1/clipping` | POST | Start clipping a YouTube video |
+| `/public/v1/clipping` | GET | List clippings (optional `?page=`) |
+| `/public/v1/clipping/:id` | GET | Get a clipping and its clips |
 
 ---
 

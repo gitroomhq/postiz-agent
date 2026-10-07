@@ -36,3 +36,6 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Plugin subpackages install their peer deps locally for tests
+plugins/*/pnpm-lock.yaml
