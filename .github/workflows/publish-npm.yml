@@ -1,0 +1,35 @@
+name: Publish to npm on release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    if: ${{ !github.event.release.prerelease }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+
+      - name: Check the tag matches package.json
+        run: |
+          if [ "v$(node -p "require('./package.json').version")" != "${{ github.event.release.tag_name }}" ]; then
+            echo "Tag ${{ github.event.release.tag_name }} does not match package.json version"
+            exit 1
+          fi
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Publish
+        run: pnpm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
