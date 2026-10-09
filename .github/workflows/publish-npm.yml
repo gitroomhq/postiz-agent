@@ -4,6 +4,9 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+
 jobs:
   publish:
     if: ${{ !github.event.release.prerelease }}
@@ -21,9 +24,11 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Check the tag matches package.json
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          if [ "v$(node -p "require('./package.json').version")" != "${{ github.event.release.tag_name }}" ]; then
-            echo "Tag ${{ github.event.release.tag_name }} does not match package.json version"
+          if [ "v$(node -p "require('./package.json').version")" != "$RELEASE_TAG" ]; then
+            echo "Tag $RELEASE_TAG does not match package.json version"
             exit 1
           fi
 
