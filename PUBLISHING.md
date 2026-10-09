@@ -269,43 +269,18 @@ npm uninstall -g postiz
 
 ## Continuous Publishing
 
-### Using GitHub Actions
+Publishing to npm is automated by `.github/workflows/publish-npm.yml`, which runs when a GitHub release is published (pre-releases are skipped).
 
-Create `.github/workflows/publish-cli.yml`:
+- It needs the `NPM_TOKEN` repository secret: an npm token with publish rights on `postiz`.
+- The release tag must be `v<package.json version>`, otherwise the workflow fails before publishing.
 
-```yaml
-name: Publish CLI to npm
+To release:
 
-on:
-  push:
-    tags:
-      - 'cli-v*'
+1. Bump the version in `package.json`, `gemini-extension.json` and the `.claude-plugin`, `.cursor-plugin` and `.grok-plugin` `plugin.json` files, and add a `CHANGELOG.md` entry.
+2. Merge to `main`.
+3. Create a GitHub release with the matching `v<version>` tag.
 
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
-
-      - run: pnpm install
-      - run: pnpm run build:cli
-
-      - name: Publish to npm
-        run: pnpm --filter ./apps/cli publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-```
-
-Then publish with:
-```bash
-git tag cli-v1.0.0
-git push origin cli-v1.0.0
-```
+If the publish job fails (for example, a missing `NPM_TOKEN`), re-run it from the Actions tab or publish manually with `pnpm run publish`.
 
 ## Common Issues
 

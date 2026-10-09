@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.21] - 2026-10-08
+
+### Added
+- GitHub Actions workflow that publishes the package to npm when a GitHub release is published (requires the `NPM_TOKEN` repository secret; the release tag must match the `package.json` version, and pre-releases are skipped).
+
+### Changed
+- `PUBLISHING.md`: the "Continuous Publishing" section now describes this workflow and the release steps instead of the outdated `cli-v*` tag workflow sample.
+
 ## [2.0.20] - 2026-10-08
 
 ### Added
