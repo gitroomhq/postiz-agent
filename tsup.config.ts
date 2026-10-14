@@ -3,6 +3,7 @@ import { defineConfig } from 'tsup';
 export default defineConfig({
   entry: ['src/index.ts'],
   format: ['cjs'],
+  noExternal: ['node-fetch'],
   dts: false, // Disable DTS generation to avoid type issues
   splitting: false,
   sourcemap: true,
