@@ -98,7 +98,7 @@ Output:
                   },
                   "type": {
                     "type": "string",
-                    "description": "Post type (text or link)"
+                    "description": "Post type (self, link or media)"
                   },
                   "url": {
                     "type": "string",
@@ -140,7 +140,7 @@ postiz posts:create \
       "value": {
         "subreddit": "programming",
         "title": "Check this out!",
-        "type": "text",
+        "type": "self",
         "url": "",
         "is_flair_required": false
       }
@@ -305,7 +305,7 @@ postiz integrations:settings reddit-123 \
   | jq '.output.settings.properties.subreddit.items.properties.value.properties'
 # → subreddit (text, minLength: 2)
 # → title (text, minLength: 2)
-# → type (select: text/link)
+# → type (select: self/link/media)
 # → etc.
 ```
 
@@ -339,7 +339,7 @@ postiz posts:create \
       "value": {
         "subreddit": "programming",
         "title": "Interesting post",
-        "type": "text",
+        "type": "self",
         "url": "",
         "is_flair_required": false
       }
