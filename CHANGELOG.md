@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.23] - 2026-10-15
+
+### Fixed
+- npm publish workflow: install dependencies with `pnpm install` instead of `pnpm install --frozen-lockfile`, since the root `pnpm-lock.yaml` is not tracked in the repo and the 2.0.22 publish job failed at the install step.
+
 ## [2.0.22] - 2026-10-15
 
 ### Added
