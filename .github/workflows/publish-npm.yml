@@ -32,7 +32,7 @@ jobs:
             exit 1
           fi
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install
 
       - name: Publish
         run: pnpm publish --access public --no-git-checks
