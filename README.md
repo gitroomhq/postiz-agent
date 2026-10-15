@@ -793,16 +793,6 @@ Output in `dist/`:
 - `index.js` - Bundled executable with shebang
 - `index.js.map` - Source map
 
-### Contributing checklist
-
-Every pull request must:
-
-1. Bump the version in `package.json`, `gemini-extension.json` and the `.claude-plugin`, `.cursor-plugin` and `.grok-plugin` `plugin.json` files, compared to `origin/main`. Bump the patch (subminor) number by default, and the minor number only for a meaningful change or a refactor.
-2. Add an entry for that version to `CHANGELOG.md`.
-3. Update `README.md`, and any other markdown file or GitHub workflow file the change affects (for example `SKILL.md` for commands and agent guidance, and `PUBLISHING.md` for release steps).
-
-If the change needs a new CLI version on npm, create a GitHub release after the PR is merged, following [PUBLISHING.md](PUBLISHING.md). Publishing the release triggers the npm publish.
-
 ---
 
 ## Quick Reference
@@ -856,14 +846,7 @@ postiz posts:create --help                        # Command help
 
 ## Contributing
 
-This CLI is part of the [Postiz monorepo](https://github.com/gitroomhq/postiz-app).
-
-To contribute:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes in `apps/cli/`
-4. Run tests: `pnpm run build`
-5. Submit a pull request
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and the pull request checklist (version bump, changelog entry, docs and release steps).
 
 ---
 

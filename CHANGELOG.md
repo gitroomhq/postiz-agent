@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.0.25] - 2026-10-15
 
 ### Changed
-- `README.md`: document `media:list` (media section, API endpoint table and quick reference) and add a contributing checklist (version bump, changelog entry, docs and release steps).
+- `README.md`: document `media:list` (media section, API endpoint table and quick reference) and add `CONTRIBUTING.md` with the pull request checklist (version bump, changelog entry, docs and release steps), linked from the README.
 
 ## [2.0.24] - 2026-10-15
 
