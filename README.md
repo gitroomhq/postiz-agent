@@ -375,6 +375,17 @@ PATH=$(echo "$RESULT" | jq -r '.path')
 postiz posts:create -c "Check out my video!" -s "2024-12-31T12:00:00Z" -m "$PATH" -i "tiktok-id"
 ```
 
+**Reuse already uploaded media**
+
+Files already in your media library do not need uploading again. List them (newest first, 18 per page) and reuse a file's `path`:
+```bash
+postiz media:list
+postiz media:list -s banner    # filter by original file name (case-insensitive)
+postiz media:list -p 2         # page number, starting at 1
+```
+
+Returns `{"pages": <total pages>, "results": [{"id", "name", "originalName", "path", "createdAt"}]}`.
+
 **Why this is required:**
 - **TikTok, Instagram, YouTube** only accept URLs from trusted domains
 - **Security:** Platforms verify media sources to prevent abuse
@@ -699,6 +710,7 @@ The CLI interacts with these Postiz API endpoints:
 | `/public/v1/analytics/:integration` | GET | Get platform analytics |
 | `/public/v1/analytics/post/:postId` | GET | Get post analytics |
 | `/public/v1/upload` | POST | Upload media |
+| `/public/v1/media` | GET | List uploaded media (optional `?page=`, `?search=`) |
 | `/public/v1/clipping` | POST | Start clipping a YouTube video |
 | `/public/v1/clipping` | GET | List clippings (optional `?page=`) |
 | `/public/v1/clipping/:id` | GET | Get a clipping and its clips |
@@ -781,6 +793,16 @@ Output in `dist/`:
 - `index.js` - Bundled executable with shebang
 - `index.js.map` - Source map
 
+### Contributing checklist
+
+Every pull request must:
+
+1. Bump the version in `package.json`, `gemini-extension.json` and the `.claude-plugin`, `.cursor-plugin` and `.grok-plugin` `plugin.json` files, compared to `origin/main`. Bump the patch (subminor) number by default, and the minor number only for a meaningful change or a refactor.
+2. Add an entry for that version to `CHANGELOG.md`.
+3. Update `README.md`, and any other markdown file or GitHub workflow file the change affects (for example `SKILL.md` for commands and agent guidance, and `PUBLISHING.md` for release steps).
+
+If the change needs a new CLI version on npm, create a GitHub release after the PR is merged, following [PUBLISHING.md](PUBLISHING.md). Publishing the release triggers the npm publish.
+
 ---
 
 ## Quick Reference
@@ -814,6 +836,7 @@ postiz posts:status <id> --status draft           # Move to draft (stops workflo
 postiz posts:status <id> --status schedule        # Queue draft for publishing
 postiz posts:settings <id> --settings '{}'        # Patch a post's settings (merged; DRAFT/QUEUE only)
 postiz upload <file>                              # Upload media
+postiz media:list -s <name>                       # Find already uploaded media to reuse
 
 # Analytics
 postiz analytics:platform <id>                    # Platform analytics (7 days)
