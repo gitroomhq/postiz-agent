@@ -384,7 +384,7 @@ postiz media:list -s banner    # filter by original file name (case-insensitive)
 postiz media:list -p 2         # page number, starting at 1
 ```
 
-Returns `{"pages": <total pages>, "results": [{"id", "name", "originalName", "path", "createdAt"}]}`.
+Returns an object with `pages` (the total page count) and `results`, a list of files with `id`, `name`, `originalName`, `path` (the URL to reuse in a post) and `createdAt`.
 
 **Why this is required:**
 - **TikTok, Instagram, YouTube** only accept URLs from trusted domains
