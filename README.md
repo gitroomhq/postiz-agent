@@ -194,6 +194,9 @@ postiz integrations:trigger youtube-456 getPlaylists
 
 # Get LinkedIn companies
 postiz integrations:trigger linkedin-789 getCompanies
+
+# Find a LinkedIn company page to tag, by its exact vanity name
+postiz integrations:trigger linkedin-789 mention -d '{"query":"microsoft"}'
 ```
 
 ---
