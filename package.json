@@ -1,6 +1,6 @@
 {
   "name": "postiz",
-  "version": "2.0.23",
+  "version": "2.0.24",
   "description": "Postiz CLI - Command line interface for the Postiz social media scheduling API",
   "main": "dist/index.js",
   "bin": {
@@ -12,7 +12,7 @@
     "build": "tsup",
     "start": "node ./dist/index.js",
     "prepublishOnly": "pnpm run build",
-    "publish": "tsup && pnpm publish --access public --no-git-checks"
+    "publish-cli": "tsup && pnpm publish --access public --no-git-checks"
   },
   "files": [
     "dist",

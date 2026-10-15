@@ -132,7 +132,7 @@ apps/cli/
   "dev": "tsup --watch",
   "build": "tsup",
   "start": "node ./dist/index.js",
-  "publish": "tsup && pnpm publish --access public"
+  "publish-cli": "tsup && pnpm publish --access public"
 }
 ```
 
@@ -235,7 +235,7 @@ pnpm run publish-cli
 
 # Or from apps/cli
 cd apps/cli
-pnpm run publish
+pnpm run publish-cli
 ```
 
 ### To Use in AI Agents
