@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.24] - 2026-10-15
+
+### Fixed
+- npm publish workflow: `pnpm publish` ran the `publish` script in `package.json` as a lifecycle hook right after publishing, which started a second publish that failed with `E409`. The script is renamed to `publish-cli` (docs updated) so the workflow publishes once.
+
+### Changed
+- `PUBLISHING.md`: the release steps now include the `gh release create` command.
+
 ## [2.0.23] - 2026-10-15
 
 ### Fixed

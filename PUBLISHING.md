@@ -278,9 +278,9 @@ To release:
 
 1. Bump the version in `package.json`, `gemini-extension.json` and the `.claude-plugin`, `.cursor-plugin` and `.grok-plugin` `plugin.json` files, and add a `CHANGELOG.md` entry.
 2. Merge to `main`.
-3. Create a GitHub release with the matching `v<version>` tag.
+3. Create a GitHub release with the matching `v<version>` tag on `main`: `gh release create v<version> --target main --title v<version> --notes-file <file>` (or `--generate-notes`).
 
-If the publish job fails (for example, a missing `NPM_TOKEN`), re-run it from the Actions tab or publish manually with `pnpm run publish`.
+If the publish job fails (for example, a missing `NPM_TOKEN`), re-run it from the Actions tab or publish manually with `pnpm run publish-cli`.
 
 ## Common Issues
 

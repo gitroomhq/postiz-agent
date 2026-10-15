@@ -249,7 +249,7 @@ pnpm run publish-cli
 
 # Or from apps/cli
 cd apps/cli
-pnpm run publish
+pnpm run publish-cli
 ```
 
 ### Install from npm
