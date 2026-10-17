@@ -5,6 +5,11 @@ export function getConfig(): PostizConfig {
   // Check for stored OAuth credentials first
   const creds = loadCredentials();
   if (creds) {
+    if (process.env.POSTIZ_API_KEY) {
+      console.error(
+        '⚠️  Using stored OAuth credentials (~/.postiz/credentials.json); POSTIZ_API_KEY is ignored. Run `postiz auth:logout` to use the API key instead.'
+      );
+    }
     return {
       apiKey: creds.accessToken,
       apiUrl: creds.apiUrl,
