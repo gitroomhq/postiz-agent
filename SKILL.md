@@ -293,6 +293,13 @@ VIDEO=$(postiz upload video.mp4)
 VIDEO_PATH=$(echo "$VIDEO" | jq -r '.path')
 postiz posts:create -c "Content" -s "2024-12-31T12:00:00Z" -m "$VIDEO_PATH" -i "tiktok-id"
 
+# Adjust to the platforms' limits (off by default): videos are scaled to 1080p and re-encoded
+# to MP4, oversized images are scaled down. The returned .path is usable right away, the
+# adjusted file replaces it when done. Poll media:status only while status is "processing";
+# "ready" with a warning means the adjustment failed and the original is used.
+postiz upload video.mp4 --adjust
+postiz media:status <id>
+
 # List what is already uploaded (newest first, 18 per page) and reuse a path
 postiz media:list -s banner
 postiz media:list -p 2
@@ -867,6 +874,8 @@ postiz posts:status <id> --status draft           # Move to draft (stops workflo
 postiz posts:status <id> --status schedule        # Queue draft for publishing
 postiz posts:settings <id> --settings '{}'        # Patch a post's settings (merged; DRAFT/QUEUE only)
 postiz upload <file>                              # Upload media
+postiz upload <file> --adjust                     # Upload and adjust to the platforms' limits
+postiz media:status <id>                          # Check an --adjust upload
 postiz media:list -s <name>                       # Find already-uploaded media to reuse
 
 # Analytics

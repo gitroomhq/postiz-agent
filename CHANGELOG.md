@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.26] - 2026-10-19
+
+### Added
+- `upload --adjust` - Adjust the uploaded file to the platforms' limits (videos scaled to 1080p and re-encoded to H.264 MP4 with AAC audio, oversized images scaled down). Off by default. The returned `path` is usable right away and the adjusted file replaces it when done.
+- `media:status <id>` - Check a file uploaded with `--adjust` via `GET /public/v1/media/:id/status`: `processing` until the adjusted file is in place, `ready` after, and `ready` with a `warning` when the adjustment failed and the original is kept.
+
 ## [2.0.25] - 2026-10-15
 
 ### Changed

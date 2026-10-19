@@ -3,7 +3,7 @@ import { hideBin } from 'yargs/helpers';
 import { createPost, listPosts, deletePost, getMissingContent, connectPost, changePostStatus, updatePostSettings } from './commands/posts';
 import { listIntegrations, listGroups, getIntegrationSettings, triggerIntegrationTool } from './commands/integrations';
 import { getAnalytics, getPostAnalytics } from './commands/analytics';
-import { uploadFile, listMedia } from './commands/upload';
+import { uploadFile, listMedia, getMediaStatus } from './commands/upload';
 import { createClipping, listClippings, getClipping } from './commands/clipping';
 import { authLogin, authLogout, authStatus } from './commands/auth';
 import type { Argv } from 'yargs';
@@ -386,9 +386,29 @@ yargs(hideBin(process.argv))
           describe: 'File path to upload',
           type: 'string',
         })
-        .example('$0 upload ./image.png', 'Upload an image');
+        .option('adjust', {
+          type: 'boolean',
+          default: false,
+          describe:
+            "Adjust the file to the platforms' limits after the upload: videos are scaled to 1080p and re-encoded to MP4, oversized images are scaled down. The returned path is usable right away and the adjusted file replaces it when done (check with media:status)",
+        })
+        .example('$0 upload ./image.png', 'Upload an image')
+        .example('$0 upload ./video.mp4 --adjust', 'Upload a video and adjust it to the platforms\' limits');
     },
     uploadFile as any
+  )
+  .command(
+    'media:status <id>',
+    'Check whether a file uploaded with --adjust finished adjusting',
+    (yargs: Argv) => {
+      return yargs
+        .positional('id', {
+          describe: 'Media ID returned by upload',
+          type: 'string',
+        })
+        .example('$0 media:status media-123', 'Poll while the status is "processing"');
+    },
+    getMediaStatus as any
   )
   .command(
     'media:list',
