@@ -375,6 +375,16 @@ PATH=$(echo "$RESULT" | jq -r '.path')
 postiz posts:create -c "Check out my video!" -s "2024-12-31T12:00:00Z" -m "$PATH" -i "tiktok-id"
 ```
 
+**Adjust media to the platforms' limits**
+
+Platforms reject media that is too large, too small or in an encoding they don't accept. Add `--adjust` (off by default) to adjust the file after the upload: videos get their short side scaled to 1080 px (long side at most 1920 px) and are re-encoded to H.264 MP4 with AAC audio, images are only scaled down to fit 1080 x 1920 and keep their format.
+```bash
+postiz upload video.mp4 --adjust
+postiz media:status <id>       # "processing" until the adjusted file is in place, then "ready"
+```
+
+The status is `processing` until the adjusted file replaces the original at the same `path`, usually within seconds. Poll `media:status` and wait until it is `ready` before publishing a post with this `path`: a post published while it is `processing` uses the original, unadjusted file. If the adjustment fails, the original is kept and used for publishing, and the status is `ready` with a `warning`. Without `--adjust` the upload is synchronous and the `path` is ready immediately.
+
 **Reuse already uploaded media**
 
 Files already in your media library do not need uploading again. List them (newest first, 18 per page) and reuse a file's `path`:
@@ -711,6 +721,7 @@ The CLI interacts with these Postiz API endpoints:
 | `/public/v1/analytics/post/:postId` | GET | Get post analytics |
 | `/public/v1/upload` | POST | Upload media |
 | `/public/v1/media` | GET | List uploaded media (optional `?page=`, `?search=`) |
+| `/public/v1/media/:id/status` | GET | Status of a media uploaded with `adjust` |
 | `/public/v1/clipping` | POST | Start clipping a YouTube video |
 | `/public/v1/clipping` | GET | List clippings (optional `?page=`) |
 | `/public/v1/clipping/:id` | GET | Get a clipping and its clips |
@@ -826,6 +837,8 @@ postiz posts:status <id> --status draft           # Move to draft (stops workflo
 postiz posts:status <id> --status schedule        # Queue draft for publishing
 postiz posts:settings <id> --settings '{}'        # Patch a post's settings (merged; DRAFT/QUEUE only)
 postiz upload <file>                              # Upload media
+postiz upload <file> --adjust                     # Upload and adjust to the platforms' limits
+postiz media:status <id>                          # Check an --adjust upload
 postiz media:list -s <name>                       # Find already uploaded media to reuse
 
 # Analytics

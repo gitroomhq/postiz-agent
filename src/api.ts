@@ -82,7 +82,13 @@ export class PostizAPI {
     );
   }
 
-  async upload(file: Buffer, filename: string) {
+  async getMediaStatus(id: string) {
+    return this.request(`/public/v1/media/${id}/status`, {
+      method: 'GET',
+    });
+  }
+
+  async upload(file: Buffer, filename: string, adjust?: boolean) {
     const formData = new FormData();
     const extension = filename.split('.').pop()?.toLowerCase() || '';
 
@@ -128,6 +134,7 @@ export class PostizAPI {
     const type = mimeTypes[extension] || 'application/octet-stream';
 
     const blob = new Blob([file], { type });
+    if (adjust) formData.append('adjust', 'true');
     formData.append('file', blob, filename);
 
     const url = `${this.apiUrl}/public/v1/upload`;
