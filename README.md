@@ -383,7 +383,7 @@ postiz upload video.mp4 --adjust
 postiz media:status <id>       # "processing" until the adjusted file is in place, then "ready"
 ```
 
-The returned `path` is usable right away: the adjusted file replaces the original at the same `path` when it's done, and a post published before that uses the original. Poll `media:status` only while the status is `processing`. If the adjustment fails, the original is kept and used for publishing, and the status is `ready` with a `warning`. Without `--adjust` the upload is synchronous and there is nothing to poll.
+The status is `processing` until the adjusted file replaces the original at the same `path`, usually within seconds. Poll `media:status` and wait until it is `ready` before publishing a post with this `path`: a post published while it is `processing` uses the original, unadjusted file. If the adjustment fails, the original is kept and used for publishing, and the status is `ready` with a `warning`. Without `--adjust` the upload is synchronous and the `path` is ready immediately.
 
 **Reuse already uploaded media**
 

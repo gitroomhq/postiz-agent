@@ -294,8 +294,8 @@ VIDEO_PATH=$(echo "$VIDEO" | jq -r '.path')
 postiz posts:create -c "Content" -s "2024-12-31T12:00:00Z" -m "$VIDEO_PATH" -i "tiktok-id"
 
 # Adjust to the platforms' limits (off by default): videos are scaled to 1080p and re-encoded
-# to MP4, oversized images are scaled down. The returned .path is usable right away, the
-# adjusted file replaces it when done. Poll media:status only while status is "processing";
+# to MP4, oversized images are scaled down. Poll media:status and wait for "ready" before
+# publishing a post with the .path, a post published while "processing" uses the original;
 # "ready" with a warning means the adjustment failed and the original is used.
 postiz upload video.mp4 --adjust
 postiz media:status <id>

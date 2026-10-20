@@ -390,7 +390,7 @@ yargs(hideBin(process.argv))
           type: 'boolean',
           default: false,
           describe:
-            "Adjust the file to the platforms' limits after the upload: videos are scaled to 1080p and re-encoded to MP4, oversized images are scaled down. The returned path is usable right away and the adjusted file replaces it when done (check with media:status)",
+            "Adjust the file to the platforms' limits after the upload: videos are scaled to 1080p and re-encoded to MP4, oversized images are scaled down. Wait until media:status returns ready before publishing a post with the returned path, or the post uses the original file",
         })
         .example('$0 upload ./image.png', 'Upload an image')
         .example('$0 upload ./video.mp4 --adjust', 'Upload a video and adjust it to the platforms\' limits');
