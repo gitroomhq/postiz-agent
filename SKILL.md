@@ -42,6 +42,8 @@ postiz posts:create ... -m "$URL" ...
 
 If you see `-m "something.jpg"` anywhere below, treat it as shorthand for "the `.path` you got back from `postiz upload something.jpg`" — never a raw local file.
 
+A file that was already uploaded does not need uploading again: find it with `postiz media:list -s <name>` and reuse its `.path`.
+
 **Rule 3 — When posting to TikTok, `content_posting_method` MUST be `"DIRECT_POST"`** unless the user has explicitly asked to finish the post inside the TikTok app. `"UPLOAD"` does not publish — it drops the media into the account's TikTok inbox to be completed manually within 24 hours, while the Postiz API still reports success. A user saying "upload this video to TikTok" means `"DIRECT_POST"`.
 
 **Rule 4 — Fetch `postiz integrations:settings <id>` before scheduling and honor the returned `rules` and per-field `description`s.** They state which settings apply and when. A setting that doesn't apply (wrong posting method, wrong media type, etc.) is **silently discarded**, not rejected — the post still reports success, so this is your only chance to catch it.
@@ -72,7 +74,7 @@ The fundamental pattern for using Postiz CLI:
 1. **Authenticate** - Verify or set up authentication (see above)
 2. **Discover** - List integrations and get their settings
 3. **Fetch** - Use integration tools to retrieve dynamic data (flairs, playlists, companies)
-4. **Prepare** - Upload media files if needed
+4. **Prepare** - Upload media files if needed (or reuse an existing `.path` from `media:list`)
 5. **Post** - Create posts with content, media, and platform-specific settings
 6. **Analyze** - Track performance with platform and post-level analytics
 7. **Resolve** - If analytics returns `{"missing": true}`, run `posts:missing` to list provider content, then `posts:connect` to link it
@@ -91,6 +93,7 @@ postiz integrations:trigger <integration-id> <method> -d '{"key":"value"}'
 
 # 4. Prepare
 postiz upload image.jpg
+postiz media:list -s image   # or reuse an already-uploaded file
 
 # 5. Post
 postiz posts:create -c "Content" -m "image.jpg" -i "<integration-id>"
@@ -166,7 +169,11 @@ postiz posts:create -c "Content" -s "2024-12-31T12:00:00Z" -t draft -i "integrat
 # Post with media (upload each file FIRST — see Rule 2)
 IMG1=$(postiz upload img1.jpg | jq -r '.path')
 IMG2=$(postiz upload img2.jpg | jq -r '.path')
-postiz posts:create -c "Content" -m "$IMG1,$IMG2" -s "2024-12-31T12:00:00Z" -i "integration-id"
+
+# Reuse something already in the media library instead of uploading again
+EXISTING=$(postiz media:list -s banner | jq -r '.results[0].path // empty')
+[ -z "$EXISTING" ] && echo "No uploaded media matches 'banner'" && exit 1
+postiz posts:create -c "Content" -m "$IMG1,$IMG2,$EXISTING" -s "2024-12-31T12:00:00Z" -i "integration-id"
 
 # Post with comments (each with own media — every file uploaded first)
 MAIN=$(postiz upload main.jpg | jq -r '.path')
@@ -272,7 +279,7 @@ Returns an empty array if the provider doesn't support this feature or if the po
 
 ### Media Upload
 
-**⚠️ IMPORTANT:** Always upload files to Postiz before using them in posts. Many platforms (TikTok, Instagram, YouTube) **require verified URLs** and will reject external links.
+**⚠️ IMPORTANT:** Always upload files to Postiz before using them in posts (or reuse a `.path` already in the media library via `media:list`). Many platforms (TikTok, Instagram, YouTube) **require verified URLs** and will reject external links.
 
 ```bash
 # Upload file and get URL
@@ -285,6 +292,17 @@ postiz upload image.jpg
 VIDEO=$(postiz upload video.mp4)
 VIDEO_PATH=$(echo "$VIDEO" | jq -r '.path')
 postiz posts:create -c "Content" -s "2024-12-31T12:00:00Z" -m "$VIDEO_PATH" -i "tiktok-id"
+
+# Adjust to the platforms' limits (off by default): videos are scaled to 1080p and re-encoded
+# to MP4, oversized images are scaled down. Poll media:status and wait for "ready" before
+# publishing a post with the .path, a post published while "processing" uses the original;
+# "ready" with a warning means the adjustment failed and the original is used.
+postiz upload video.mp4 --adjust
+postiz media:status <id>
+
+# List what is already uploaded (newest first, 18 per page) and reuse a path
+postiz media:list -s banner
+postiz media:list -p 2
 ```
 
 ### Clipping (long video → short clips)
@@ -363,6 +381,30 @@ postiz posts:create \
   --settings "{\"companyId\":\"$COMPANY_ID\"}" \
   -i "$LINKEDIN_ID"
 ```
+
+**LinkedIn - Tag a company page:**
+```bash
+# Works with a "linkedin" or "linkedin-page" channel
+# (tail skips the header line the CLI prints before the JSON)
+LINKEDIN_ID=$(postiz integrations:list | tail -n +2 | jq -r 'first(.[] | select(.identifier=="linkedin" or .identifier=="linkedin-page") | .id)')
+
+# Look up the page by its vanity name (the part after linkedin.com/company/), exact match only
+MENTION=$(postiz integrations:trigger "$LINKEDIN_ID" mention -d '{"query":"microsoft"}' | tail -n +2)
+ORG_ID=$(echo "$MENTION" | jq -r '.output[0].id // empty')
+ORG_NAME=$(echo "$MENTION" | jq -r '(.output[0].label // empty) | @html')
+
+# Tag it in the content with a mention span
+if [ -n "$ORG_ID" ]; then
+  postiz posts:create \
+    -c "<p>Built with <span data-mention-id=\"$ORG_ID\" data-mention-label=\"$ORG_NAME\">@$ORG_NAME</span></p>" \
+    -s "2024-12-31T12:00:00Z" \
+    -t draft \
+    -i "$LINKEDIN_ID"
+else
+  echo "No LinkedIn company page has that exact vanity name"
+fi
+```
+An empty `output` means no page has that exact vanity name. Only company pages can be tagged this way, not people.
 
 ### Pattern 2: Upload Media Before Posting
 
@@ -789,7 +831,7 @@ https://clawhub.ai/nevo-david/agent-media
 1. **Not authenticated** - Run `postiz auth:login` or `export POSTIZ_API_KEY=key` before using CLI
 2. **Invalid integration ID** - Run `integrations:list` to get current IDs
 3. **Settings schema mismatch** - Check `integrations:settings` for required fields
-4. **Media MUST be uploaded to Postiz first** - ⚠️ **CRITICAL (Rule 2):** Every value passed to `-m` or to an `image`/media field in JSON mode must be a `.path` returned by `postiz upload`. Raw local filenames (`image.jpg`) and external URLs (`https://...`) will be rejected — TikTok, Instagram, YouTube and most other providers only accept Postiz-verified URLs. No exceptions: even a "quick test post" needs the upload step.
+4. **Media MUST be uploaded to Postiz first** - ⚠️ **CRITICAL (Rule 2):** Every value passed to `-m` or to an `image`/media field in JSON mode must be a `.path` returned by `postiz upload`. Raw local filenames (`image.jpg`) and external URLs (`https://...`) will be rejected — TikTok, Instagram, YouTube and most other providers only accept Postiz-verified URLs. No exceptions: even a "quick test post" needs the upload step — or a `.path` of a file already uploaded (find it with `media:list -s <name>`).
 5. **JSON escaping in shell** - Use single quotes for JSON: `--settings '{...}'`
 6. **Date format** - Must be ISO 8601: `"2024-12-31T12:00:00Z"` and is REQUIRED
 7. **Tool not found** - Check available tools in `integrations:settings` output
@@ -832,6 +874,9 @@ postiz posts:status <id> --status draft           # Move to draft (stops workflo
 postiz posts:status <id> --status schedule        # Queue draft for publishing
 postiz posts:settings <id> --settings '{}'        # Patch a post's settings (merged; DRAFT/QUEUE only)
 postiz upload <file>                              # Upload media
+postiz upload <file> --adjust                     # Upload and adjust to the platforms' limits
+postiz media:status <id>                          # Check an --adjust upload
+postiz media:list -s <name>                       # Find already-uploaded media to reuse
 
 # Analytics
 postiz analytics:platform <id>                    # Platform analytics (7 days)

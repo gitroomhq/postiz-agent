@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.26] - 2026-10-19
+
+### Added
+- `upload --adjust` - Adjust the uploaded file to the platforms' limits (videos scaled to 1080p and re-encoded to H.264 MP4 with AAC audio, oversized images scaled down). Off by default. Wait until `media:status` returns `ready` before publishing a post with the returned `path`, or the post uses the original file.
+- `media:status <id>` - Check a file uploaded with `--adjust` via `GET /public/v1/media/:id/status`: `processing` until the adjusted file is in place, `ready` after, and `ready` with a `warning` when the adjustment failed and the original is kept.
+
+## [2.0.25] - 2026-10-15
+
+### Changed
+- `README.md`: document `media:list` (media section, API endpoint table and quick reference) and add `CONTRIBUTING.md` with the pull request checklist (version bump, changelog entry, docs and release steps), linked from the README.
+
+## [2.0.24] - 2026-10-15
+
+### Fixed
+- npm publish workflow: `pnpm publish` ran the `publish` script in `package.json` as a lifecycle hook right after publishing, which started a second publish that failed with `E409`. The script is renamed to `publish-cli` (docs updated) so the workflow publishes once.
+
+### Changed
+- `PUBLISHING.md`: the release steps now include the `gh release create` command.
+
+## [2.0.23] - 2026-10-15
+
+### Fixed
+- npm publish workflow: install dependencies with `pnpm install` instead of `pnpm install --frozen-lockfile`, since the root `pnpm-lock.yaml` is not tracked in the repo and the 2.0.22 publish job failed at the install step.
+
+## [2.0.22] - 2026-10-15
+
+### Added
+- GitHub Actions workflow that publishes the package to npm when a GitHub release is published (requires the `NPM_TOKEN` repository secret; the release tag must match the `package.json` version, and pre-releases are skipped).
+
+### Changed
+- `PUBLISHING.md`: the "Continuous Publishing" section now describes this workflow and the release steps instead of the outdated `cli-v*` tag workflow sample.
+
+## [2.0.21] - 2026-10-13
+
+### Added
+- Skill and README: tag a LinkedIn company page in a post by looking it up with `integrations:trigger <id> mention` (exact vanity name) and putting the returned id and label in a mention span. Needs the Postiz API version that exposes the LinkedIn `mention` tool.
+
+## [2.0.20] - 2026-10-08
+
+### Added
+- `media:list` - List media already uploaded to the media library via `GET /public/v1/media` (newest first, 18 per page, `--search` by original file name, `--page`), so existing uploads can be reused without uploading again.
+
 ## [2.0.19] - 2026-09-21
 
 ### Added
