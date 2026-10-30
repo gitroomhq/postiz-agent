@@ -83,6 +83,7 @@ export async function createPost(args: any) {
     // Normalize to arrays
     const contents = Array.isArray(args.content) ? args.content : [args.content];
     const medias = Array.isArray(args.media) ? args.media : (args.media ? [args.media] : []);
+    const alts = Array.isArray(args.alt) ? args.alt : (args.alt ? [args.alt] : []);
 
     if (!contents[0]) {
       console.error('❌ At least one -c/--content is required');
@@ -92,10 +93,12 @@ export async function createPost(args: any) {
     // Build value array by pairing contents with their media
     const values = contents.map((content: string, index: number) => {
       const mediaForThisContent = medias[index];
+      const altsForThisContent = alts[index] ? alts[index].split(',') : [];
       const images = mediaForThisContent
-        ? mediaForThisContent.split(',').map((img: string) => ({
+        ? mediaForThisContent.split(',').map((img: string, i: number) => ({
             id: Math.random().toString(36).substring(7),
             path: img.trim(),
+            ...(altsForThisContent[i]?.trim() ? { alt: altsForThisContent[i].trim() } : {}),
           }))
         : [];
 
