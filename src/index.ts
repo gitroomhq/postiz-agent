@@ -26,6 +26,10 @@ yargs(hideBin(process.argv))
           describe: 'Comma-separated media URLs for the corresponding -c (can be used multiple times)',
           type: 'string',
         })
+        .option('alt', {
+          describe: 'Comma-separated alt texts for the media of the corresponding -m, same order (can be used multiple times, use --json for alt texts containing commas)',
+          type: 'string',
+        })
         .option('integrations', {
           alias: 'i',
           describe: 'Comma-separated list of integration IDs',
@@ -86,6 +90,10 @@ yargs(hideBin(process.argv))
         .example(
           '$0 posts:create -c "Main post" -m "img1.jpg,img2.jpg" -s "2024-12-31T12:00:00Z" -i "twitter-123"',
           'Post with multiple images'
+        )
+        .example(
+          '$0 posts:create -c "Main post" -m "img1.jpg,img2.jpg" --alt "first alt,second alt" -s "2024-12-31T12:00:00Z" -i "instagram-123"',
+          'Post with alt text per image (same order as -m)'
         )
         .example(
           '$0 posts:create -c "Main post" -m "img1.jpg" -c "First comment" -m "img2.jpg" -c "Second comment" -m "img3.jpg,img4.jpg" -s "2024-12-31T12:00:00Z" -i "twitter-123"',

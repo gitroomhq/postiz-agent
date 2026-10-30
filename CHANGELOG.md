@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-10-30
+
+### Added
+- `posts:create --alt` - Comma-separated alt texts for the media of the corresponding `-m`, in the same order (repeat it per `-c` like `-m`). Entries left empty keep that media without alt text; use `--json` with `image[].alt` for alt texts that contain commas. Instagram sends it as `alt_text` on images (single and carousel), not on videos or stories.
+
 ## [2.0.26] - 2026-10-19
 
 ### Added
