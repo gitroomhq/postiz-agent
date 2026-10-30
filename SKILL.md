@@ -779,6 +779,8 @@ postiz posts:create \
 
 # Image with alt text (--alt pairs with -m in the same order; Instagram applies it
 # to images in posts and carousels only, not to videos or stories; in --json mode use image[].alt)
+IMAGE_2=$(postiz upload beach.jpg)
+IMAGE_URL_2=$(echo "$IMAGE_2" | jq -r '.path')
 postiz posts:create \
   -c "Caption #hashtag" \
   -s "2024-12-31T12:00:00Z" \
