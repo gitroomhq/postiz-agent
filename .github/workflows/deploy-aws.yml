@@ -1,0 +1,75 @@
+name: deploy-aws
+
+# Builds the CLI auth server's ARM64 image (server/aws.Dockerfile), pushes
+# <ECR_REPOSITORY>:<sha>, moves :production to it and rolls the ECS service (new
+# tasks first, then the old ones stop: no downtime); ECS rolls back on its own
+# when the new tasks do not get healthy. Only for changes under server/: the CLI
+# itself ships through publish-npm.yml. The AWS side lives in
+# gitroomhq/postiz-internal-infra (environments/postiz-agent).
+#
+# Off until the repository variable AWS_DEPLOY is "true" (set it once the infra
+# is applied). Railway keeps deploying from its own integration until the cutover.
+#
+# Repository variables: AWS_DEPLOY, AWS_DEPLOY_ROLE_ARN, ECR_REPOSITORY
+# (outputs deploy_role_arn and ecr_repository); BUILD_RUNNER optional.
+# Rollback: run this workflow by hand on the previous commit.
+
+on:
+  push:
+    branches: [main]
+    paths: ["server/**", ".github/workflows/deploy-aws.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-aws
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-2
+  CLUSTER: postiz-production
+  SERVICE: postiz-agent
+
+jobs:
+  deploy:
+    if: vars.AWS_DEPLOY == 'true'
+    # no job environment: the deploy role trusts this repository's main branch
+    runs-on: ${{ vars.BUILD_RUNNER || 'ubuntu-24.04-arm' }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: server
+          file: server/aws.Dockerfile
+          platforms: linux/arm64
+          push: true
+          provenance: false
+          tags: |
+            ${{ steps.ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ github.sha }}
+            ${{ steps.ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:production
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: roll out
+        run: |
+          aws ecs update-service --cluster "$CLUSTER" --service "$SERVICE" --force-new-deployment \
+            --query 'service.serviceName' --output text
+          aws ecs wait services-stable --cluster "$CLUSTER" --services "$SERVICE"
+          aws ecs describe-services --cluster "$CLUSTER" --services "$SERVICE" \
+            --query 'services[0].deployments[0].{status:status,rollout:rolloutState,running:runningCount}' --output table
