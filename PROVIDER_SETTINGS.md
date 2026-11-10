@@ -37,7 +37,7 @@ In the JSON file, specify settings per integration:
         "value": {
           "subreddit": "programming",
           "title": "My Post Title",
-          "type": "text",
+          "type": "self",
           "url": "",
           "is_flair_required": false
         }
@@ -54,7 +54,7 @@ In the JSON file, specify settings per integration:
 **Settings:**
 - `subreddit` (required): Subreddit name
 - `title` (required): Post title
-- `type` (required): `"text"` or `"link"`
+- `type` (required): `"self"` (text), `"link"` (requires `url`), or `"media"` (uploads the post's first attached image/mp4; `url` ignored)
 - `url` (required for links): URL if type is "link"
 - `is_flair_required` (boolean): Whether flair is required
 - `flair` (optional): Flair object with `id` and `name`
@@ -69,7 +69,7 @@ postiz posts:create \
       "value": {
         "subreddit": "programming",
         "title": "Check out this cool project",
-        "type": "text",
+        "type": "self",
         "url": "",
         "is_flair_required": false
       }
@@ -310,7 +310,7 @@ For complex settings, it's easier to use JSON files:
         "value": {
           "subreddit": "programming",
           "title": "My Cool Project - Built with TypeScript",
-          "type": "text",
+          "type": "self",
           "url": "",
           "is_flair_required": true,
           "flair": {
@@ -384,7 +384,7 @@ postiz posts:create --json youtube-video.json
           "value": {
             "subreddit": "programming",
             "title": "Post Title",
-            "type": "text",
+            "type": "self",
             "url": "",
             "is_flair_required": false
           }

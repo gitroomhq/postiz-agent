@@ -127,7 +127,7 @@ postiz posts:create \
       "value": {
         "subreddit": "programming",
         "title": "My Cool Project",
-        "type": "text",
+        "type": "self",
         "url": "",
         "is_flair_required": true,
         "flair": {

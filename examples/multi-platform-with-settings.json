@@ -20,7 +20,7 @@
           "value": {
             "subreddit": "programming",
             "title": "Launching Postiz CLI - Social Media Automation for Developers",
-            "type": "text",
+            "type": "self",
             "url": "",
             "is_flair_required": false
           }
