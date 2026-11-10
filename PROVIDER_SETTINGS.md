@@ -178,6 +178,15 @@ postiz posts:create \
   -i "instagram-123"
 ```
 
+**Reel Cover Image:** to set a custom Reel cover, pass the video as a media
+object with a `thumbnail` (uploaded JPEG/PNG path) using `--json`:
+```json
+"image": [
+  { "id": "reel", "path": "<uploaded video path>", "thumbnail": "<uploaded cover.jpg path>" }
+]
+```
+Without `thumbnail`, Instagram picks a frame from the video as the cover.
+
 **Story Example:**
 ```bash
 postiz posts:create \
