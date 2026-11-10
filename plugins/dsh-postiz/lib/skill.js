@@ -78,6 +78,8 @@ Call \`mcp__postiz__schedulePostTool\` with a \`socialPost\` array. Each item:
 \`mcp__postiz__postsListTool\` lists posts between two dates.
 \`mcp__postiz__postSettingsTool\` updates the settings of a post that has not
 been published yet.
+\`mcp__postiz__deletePostTool\` deletes a post together with its thread items or
+comments. It cannot be undone, so confirm with the user first.
 
 ## Setup
 

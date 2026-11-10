@@ -57,6 +57,7 @@ The model sees the Postiz MCP tools under the `mcp__postiz__` namespace:
 | `mcp__postiz__schedulePostTool` | Schedule, draft, or immediately publish posts |
 | `mcp__postiz__postsListTool` | List posts scheduled between two dates |
 | `mcp__postiz__postSettingsTool` | Update settings of an unpublished post |
+| `mcp__postiz__deletePostTool` | Delete a post and its thread items or comments (cannot be undone) |
 | `mcp__postiz__generateImageTool` | Generate an image for a post |
 | `mcp__postiz__generateVideoOptions` / `videoFunctionTool` / `generateVideoTool` | Video generation options and generation |
 
