@@ -241,6 +241,50 @@ export async function updatePostSettings(args: any) {
   }
 }
 
+export async function updatePostAttachments(args: any) {
+  const config = getConfig();
+  const api = new PostizAPI(config);
+
+  if (!args.id) {
+    console.error('❌ Post ID is required');
+    process.exit(1);
+  }
+
+  if (typeof args.media !== 'string') {
+    console.error('❌ Pass --media once, as a comma-separated list (an empty string removes all attachments)');
+    process.exit(1);
+  }
+
+  if (args.alt !== undefined && typeof args.alt !== 'string') {
+    console.error('❌ Pass --alt once, as a comma-separated list in the same order as --media');
+    process.exit(1);
+  }
+
+  const medias = args.media === '' ? [] : args.media.split(',').map((img: string) => img.trim());
+
+  if (medias.some((img: string) => !img)) {
+    console.error('❌ --media has an empty entry. Pass -m "" to remove all attachments');
+    process.exit(1);
+  }
+
+  const alts = args.alt ? args.alt.split(',') : [];
+  const attachments = medias.map((img: string, i: number) => ({
+    id: Math.random().toString(36).substring(7),
+    path: img,
+    ...(alts[i]?.trim() ? { alt: alts[i].trim() } : {}),
+  }));
+
+  try {
+    const result = await api.updatePostAttachments(args.id, attachments);
+    console.log(`✅ Post ${args.id} attachments updated`);
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  } catch (error: any) {
+    console.error('❌ Failed to update post attachments:', error.message);
+    process.exit(1);
+  }
+}
+
 export async function deletePost(args: any) {
   const config = getConfig();
   const api = new PostizAPI(config);

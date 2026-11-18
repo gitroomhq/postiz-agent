@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.29] - 2026-11-18
+
+### Added
+- `posts:attachments <id> -m "<url>,<url>"` - Replace the attachments of an unpublished (draft or scheduled) post. The list replaces all the existing attachments of the main post, `-m ""` removes them all, and `--alt` sets alt texts in the same order. The content, settings and publish date stay as they are.
+
+### Changed
+- `plugins/dsh-postiz`: list the new MCP tool `postAttachmentsTool` in the README tools table and in the model-facing skill text.
+
 ## [2.0.28] - 2026-11-18
 
 ### Changed

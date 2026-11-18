@@ -1,6 +1,6 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { createPost, listPosts, deletePost, getMissingContent, connectPost, changePostStatus, updatePostSettings } from './commands/posts';
+import { createPost, listPosts, deletePost, getMissingContent, connectPost, changePostStatus, updatePostSettings, updatePostAttachments } from './commands/posts';
 import { listIntegrations, listGroups, getIntegrationSettings, triggerIntegrationTool } from './commands/integrations';
 import { getAnalytics, getPostAnalytics } from './commands/analytics';
 import { uploadFile, listMedia, getMediaStatus } from './commands/upload';
@@ -235,6 +235,37 @@ yargs(hideBin(process.argv))
         );
     },
     updatePostSettings as any
+  )
+  .command(
+    'posts:attachments <id>',
+    'Replace a post\'s attachments (only unpublished draft/scheduled posts)',
+    (yargs: Argv) => {
+      return yargs
+        .positional('id', {
+          describe: 'Post ID',
+          type: 'string',
+        })
+        .option('media', {
+          alias: 'm',
+          describe: 'Comma-separated media URLs that replace all the existing attachments of the post; pass an empty string to remove them all (refused when the post would be left invalid, e.g. with no text and no media)',
+          type: 'string',
+          demandOption: true,
+          nargs: 1,
+        })
+        .option('alt', {
+          describe: 'Comma-separated alt texts for the media of -m, same order',
+          type: 'string',
+        })
+        .example(
+          '$0 posts:attachments post-123 -m "https://uploads.postiz.com/a.png,https://uploads.postiz.com/b.png"',
+          'Replace the attachments of a post with two images'
+        )
+        .example(
+          '$0 posts:attachments post-123 -m ""',
+          'Remove all the attachments of a post'
+        );
+    },
+    updatePostAttachments as any
   )
   .command(
     'posts:connect <id>',
