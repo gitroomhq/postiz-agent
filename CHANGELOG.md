@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.28] - 2026-11-18
+
+### Changed
+- `plugins/dsh-postiz`: list the new MCP tools `integrationAnalyticsTool` (channel analytics) and `postAnalyticsTool` (post analytics) in the README tools table and in the model-facing skill text. No CLI change: the CLI already has `analytics:platform` and `analytics:post`.
+
 ## [2.0.27] - 2026-10-30
 
 ### Added
