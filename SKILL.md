@@ -219,6 +219,12 @@ postiz posts:delete <post-id>
 postiz posts:status <post-id> --status draft     # Move back to draft, terminates any running publish workflow
 postiz posts:status <post-id> --status schedule  # Promote a draft into the publishing queue (uses the post's stored date)
 
+# Replace a post's attachments (the list replaces ALL the existing attachments of the main post)
+# Only DRAFT/QUEUE (unpublished) posts can be updated. Pass the MAIN post id, not a comment id.
+postiz posts:attachments <post-id> -m "https://uploads.postiz.com/a.png,https://uploads.postiz.com/b.png"  # Replace with two images
+postiz posts:attachments <post-id> -m "https://uploads.postiz.com/a.png" --alt "A red bicycle"             # With alt text
+postiz posts:attachments <post-id> -m ""                                                                    # Remove all the attachments
+
 # Update a post's provider-specific settings (merged — only the keys you pass change)
 # Only DRAFT/QUEUE (unpublished) posts can be updated. Pass the MAIN post id, not a comment id.
 # Do NOT include __type — the backend adds it automatically from the integration.
@@ -885,6 +891,7 @@ postiz posts:delete <id>                          # Delete post
 postiz posts:status <id> --status draft           # Move to draft (stops workflow)
 postiz posts:status <id> --status schedule        # Queue draft for publishing
 postiz posts:settings <id> --settings '{}'        # Patch a post's settings (merged; DRAFT/QUEUE only)
+postiz posts:attachments <id> -m "<url>,<url>"     # Replace a post's attachments (DRAFT/QUEUE only)
 postiz upload <file>                              # Upload media
 postiz upload <file> --adjust                     # Upload and adjust to the platforms' limits
 postiz media:status <id>                          # Check an --adjust upload

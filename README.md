@@ -285,6 +285,15 @@ postiz posts:status <post-id> --status schedule
 
 Move a scheduled post back to a draft, or promote a draft into the publishing queue. Switching to `draft` also terminates any workflow that's already running for the post, so it won't publish. Switching to `schedule` queues the post for publishing at its stored date.
 
+**Replace a post's attachments**
+```bash
+postiz posts:attachments <post-id> -m "https://uploads.postiz.com/a.png,https://uploads.postiz.com/b.png"
+postiz posts:attachments <post-id> -m "https://uploads.postiz.com/a.png" --alt "A red bicycle"
+postiz posts:attachments <post-id> -m ""
+```
+
+Replaces the attachments of the main post server-side. The list you pass **replaces** all the existing attachments, so pass the full list the post should have; `-m ""` removes them all. The content, settings and publish date stay as they are. Only **DRAFT/QUEUE** (unpublished) posts can be updated; published posts are rejected. Pass the **main post id**, not a comment id; the attachments of comments are not changed.
+
 **Update a post's provider-specific settings**
 ```bash
 postiz posts:settings <post-id> --settings '{"content_posting_method":"DIRECT_POST"}'
@@ -837,6 +846,7 @@ postiz posts:delete <id>                          # Delete post
 postiz posts:status <id> --status draft           # Move to draft (stops workflow)
 postiz posts:status <id> --status schedule        # Queue draft for publishing
 postiz posts:settings <id> --settings '{}'        # Patch a post's settings (merged; DRAFT/QUEUE only)
+postiz posts:attachments <id> -m "<url>,<url>"     # Replace a post's attachments (DRAFT/QUEUE only)
 postiz upload <file>                              # Upload media
 postiz upload <file> --adjust                     # Upload and adjust to the platforms' limits
 postiz media:status <id>                          # Check an --adjust upload

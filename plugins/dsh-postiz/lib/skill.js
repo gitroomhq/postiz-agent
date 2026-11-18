@@ -78,6 +78,9 @@ Call \`mcp__postiz__schedulePostTool\` with a \`socialPost\` array. Each item:
 \`mcp__postiz__postsListTool\` lists posts between two dates.
 \`mcp__postiz__postSettingsTool\` updates the settings of a post that has not
 been published yet.
+\`mcp__postiz__postAttachmentsTool\` replaces the attachments of a post that
+has not been published yet: pass the full list the post should have, an empty
+list removes them all.
 
 ## Analytics
 

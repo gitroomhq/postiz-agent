@@ -175,6 +175,16 @@ export class PostizAPI {
     });
   }
 
+  async updatePostAttachments(
+    postId: string,
+    attachments: { id: string; path: string; alt?: string }[]
+  ) {
+    return this.request(`/public/v1/posts/${postId}/attachments`, {
+      method: 'PUT',
+      body: JSON.stringify({ attachments }),
+    });
+  }
+
   async updatePostSettings(postId: string, settings: Record<string, any>) {
     return this.request(`/public/v1/posts/${postId}/settings`, {
       method: 'PUT',

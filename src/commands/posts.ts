@@ -241,6 +241,42 @@ export async function updatePostSettings(args: any) {
   }
 }
 
+export async function updatePostAttachments(args: any) {
+  const config = getConfig();
+  const api = new PostizAPI(config);
+
+  if (!args.id) {
+    console.error('❌ Post ID is required');
+    process.exit(1);
+  }
+
+  if (typeof args.media !== 'string') {
+    console.error('❌ --media is required (pass an empty string to remove all attachments)');
+    process.exit(1);
+  }
+
+  const alts = args.alt ? args.alt.split(',') : [];
+  const attachments = args.media
+    .split(',')
+    .map((img: string) => img.trim())
+    .filter(Boolean)
+    .map((img: string, i: number) => ({
+      id: Math.random().toString(36).substring(7),
+      path: img,
+      ...(alts[i]?.trim() ? { alt: alts[i].trim() } : {}),
+    }));
+
+  try {
+    const result = await api.updatePostAttachments(args.id, attachments);
+    console.log(`✅ Post ${args.id} attachments updated`);
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  } catch (error: any) {
+    console.error('❌ Failed to update post attachments:', error.message);
+    process.exit(1);
+  }
+}
+
 export async function deletePost(args: any) {
   const config = getConfig();
   const api = new PostizAPI(config);
