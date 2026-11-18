@@ -59,6 +59,8 @@ The model sees the Postiz MCP tools under the `mcp__postiz__` namespace:
 | `mcp__postiz__postSettingsTool` | Update settings of an unpublished post |
 | `mcp__postiz__generateImageTool` | Generate an image for a post |
 | `mcp__postiz__generateVideoOptions` / `videoFunctionTool` / `generateVideoTool` | Video generation options and generation |
+| `mcp__postiz__integrationAnalyticsTool` | Analytics of a connected channel for the last days |
+| `mcp__postiz__postAnalyticsTool` | Analytics of a published post for the last days |
 
 The tool list comes from the server at connect time, so new Postiz tools appear without a
 plugin update. See the [Postiz MCP tools reference](https://docs.postiz.com/mcp/tools).

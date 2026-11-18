@@ -79,6 +79,17 @@ Call \`mcp__postiz__schedulePostTool\` with a \`socialPost\` array. Each item:
 \`mcp__postiz__postSettingsTool\` updates the settings of a post that has not
 been published yet.
 
+## Analytics
+
+Analytics are separate from the posting steps above: do not compose or
+schedule anything for an analytics request.
+\`mcp__postiz__integrationAnalyticsTool\` returns the analytics of a channel
+(pass the channel \`id\`, and \`days\` for the period, 7 by default).
+\`mcp__postiz__postAnalyticsTool\` returns the analytics of a published post:
+find the post with \`mcp__postiz__postsListTool\` first and pass its \`id\`.
+The metrics differ per platform. An empty result means there is no data to
+show, not an error.
+
 ## Setup
 
 The tools are missing when no API key is configured. The key comes from the
