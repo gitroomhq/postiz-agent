@@ -251,20 +251,28 @@ export async function updatePostAttachments(args: any) {
   }
 
   if (typeof args.media !== 'string') {
-    console.error('❌ --media is required (pass an empty string to remove all attachments)');
+    console.error('❌ Pass --media once, as a comma-separated list (an empty string removes all attachments)');
+    process.exit(1);
+  }
+
+  if (args.alt !== undefined && typeof args.alt !== 'string') {
+    console.error('❌ Pass --alt once, as a comma-separated list in the same order as --media');
+    process.exit(1);
+  }
+
+  const medias = args.media === '' ? [] : args.media.split(',').map((img: string) => img.trim());
+
+  if (medias.some((img: string) => !img)) {
+    console.error('❌ --media has an empty entry. Pass -m "" to remove all attachments');
     process.exit(1);
   }
 
   const alts = args.alt ? args.alt.split(',') : [];
-  const attachments = args.media
-    .split(',')
-    .map((img: string) => img.trim())
-    .filter(Boolean)
-    .map((img: string, i: number) => ({
-      id: Math.random().toString(36).substring(7),
-      path: img,
-      ...(alts[i]?.trim() ? { alt: alts[i].trim() } : {}),
-    }));
+  const attachments = medias.map((img: string, i: number) => ({
+    id: Math.random().toString(36).substring(7),
+    path: img,
+    ...(alts[i]?.trim() ? { alt: alts[i].trim() } : {}),
+  }));
 
   try {
     const result = await api.updatePostAttachments(args.id, attachments);

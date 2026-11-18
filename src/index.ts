@@ -247,9 +247,10 @@ yargs(hideBin(process.argv))
         })
         .option('media', {
           alias: 'm',
-          describe: 'Comma-separated media URLs that replace all the existing attachments of the post; pass an empty string to remove them all',
+          describe: 'Comma-separated media URLs that replace all the existing attachments of the post; pass an empty string to remove them all (refused when the post would be left invalid, e.g. with no text and no media)',
           type: 'string',
           demandOption: true,
+          nargs: 1,
         })
         .option('alt', {
           describe: 'Comma-separated alt texts for the media of -m, same order',

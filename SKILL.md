@@ -221,6 +221,7 @@ postiz posts:status <post-id> --status schedule  # Promote a draft into the publ
 
 # Replace a post's attachments (the list replaces ALL the existing attachments of the main post)
 # Only DRAFT/QUEUE (unpublished) posts can be updated. Pass the MAIN post id, not a comment id.
+# Removing all of them is refused when the post would be left invalid (no text, or a scheduled post on a platform that requires media).
 postiz posts:attachments <post-id> -m "https://uploads.postiz.com/a.png,https://uploads.postiz.com/b.png"  # Replace with two images
 postiz posts:attachments <post-id> -m "https://uploads.postiz.com/a.png" --alt "A red bicycle"             # With alt text
 postiz posts:attachments <post-id> -m ""                                                                    # Remove all the attachments

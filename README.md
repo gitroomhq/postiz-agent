@@ -292,7 +292,7 @@ postiz posts:attachments <post-id> -m "https://uploads.postiz.com/a.png" --alt "
 postiz posts:attachments <post-id> -m ""
 ```
 
-Replaces the attachments of the main post server-side. The list you pass **replaces** all the existing attachments, so pass the full list the post should have; `-m ""` removes them all. The content, settings and publish date stay as they are. Only **DRAFT/QUEUE** (unpublished) posts can be updated; published posts are rejected. Pass the **main post id**, not a comment id; the attachments of comments are not changed.
+Replaces the attachments of the main post server-side. The list you pass **replaces** all the existing attachments, so pass the full list the post should have; `-m ""` removes them all. The content, settings and publish date stay as they are. Only **DRAFT/QUEUE** (unpublished) posts can be updated; published posts are rejected. Pass the **main post id**, not a comment id; the attachments of comments are not changed. Removing all the attachments is refused when it would leave the post invalid: a post with no text, or a scheduled post on a platform that requires media.
 
 **Update a post's provider-specific settings**
 ```bash
